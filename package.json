@@ -1,0 +1,34 @@
+{
+  "name": "vanilla",
+  "version": "0.0.1",
+  "description": "A simple HTML, JS and CSS templating library.",
+  "main": "index.js",
+  "scripts": {
+    "test": "vows test/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dschnare/vanilla"
+  },
+  "keywords": [
+    "templating",
+    "html",
+    "js",
+    "css",
+    "simple"
+  ],
+  "author": "Darren Schanre <schnare.d@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dschnare/vanilla/issues"
+  },
+  "devDependencies": {
+    "vows": "*"
+  },
+  "dependencies": {
+    
+  },
+  "engines": {
+    "node": ">=0.10.20"
+  }
+}
