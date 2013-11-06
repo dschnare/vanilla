@@ -1,0 +1,5 @@
+var Module = (function () {
+  return {
+  
+  };
+}());

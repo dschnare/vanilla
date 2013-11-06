@@ -4,7 +4,7 @@
   "description": "A simple HTML, JS and CSS templating library.",
   "main": "index.js",
   "scripts": {
-    "test": "vows test/*"
+    "test": "vows test/*.js"
   },
   "repository": {
     "type": "git",
