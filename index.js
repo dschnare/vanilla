@@ -8,7 +8,7 @@ util = require('./lib/util');
 /////////
 
 exports.compile = function (filepath, mode, options, callback) {
-  var optionsFilepath, compiler, abspwd;
+  var optionsFilepath, compiler;
   
   if (typeof callback !== 'function') callback = function () {};
   
@@ -32,12 +32,10 @@ exports.compile = function (filepath, mode, options, callback) {
     }
   });
   
-  abs = path.resolve('.');
-
-  options.server.root = path.resolve(optionsFilepath || abspwd, options.server.root);
-  options.js.output = path.resolve(optionsFilepath || abspwd, options.js.output);
-  options.css.output = path.resolve(optionsFilepath || abspwd, options.css.output);
-  options.html.output = path.resolve(optionsFilepath || abspwd, options.html.output);
+  options.server.root = path.resolve(optionsFilepath || path.resolve('.'), options.server.root);
+  options.js.output = path.resolve(options.server.root, options.js.output);
+  options.css.output = path.resolve(options.server.root, options.css.output);
+  options.html.output = path.resolve(options.server.root, options.html.output);
   
   compiler = selectVanillaCompiler(path.extname(filepath));
   if (compiler) {

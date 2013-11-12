@@ -33,12 +33,12 @@ Options
     root: 'relative path to server root (relative to options JSON file or the current directory)'
   },
   js: {
-    output: 'path to copy/output javascript files (relative to options JSON file or the current directory)'
+    output: 'path to copy/output javascript files (relative to server root)'
   },
   css: {
-    output: 'path to copy/output stylesheet files (relative to options JSON file or the current directory)'
+    output: 'path to copy/output stylesheet files (relative to server root)'
   },
   html: {
-    output: 'path to copy/output html files (relative to options JSON file or the current directory)'
+    output: 'path to copy/output html files (relative to server root)'
   }
 }
