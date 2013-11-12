@@ -1,7 +1,7 @@
 var vows = require('vows');
 var assert = require('assert');
 var createStringReader = require('./../lib/stringreader').createStringReader;
-var createTokenizer = require('./../lib/javascripttokenizer').createTokenizer;
+var createTokenizer = require('./../lib/compiler/js/tokenizer').createTokenizer;
 var fs = require('fs');
 
 vows.describe('JavaScriptTokenizer').addBatch({
