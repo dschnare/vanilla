@@ -1,3 +1,3 @@
 //#import "./b.js"
 
-var A = 'A';
+exports['A'] = 'A';

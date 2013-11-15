@@ -100,7 +100,9 @@ vows.describe('JavaScriptCompiler').addBatch({
         var imports = [
           '<script src="/js/lib/c.js" type="text/javascript"></script>',
           '<script src="/js/b.js" type="text/javascript"></script>',
-          '<script src="/js/a.js" type="text/javascript"></script>'
+          '<script type="text/javascript">var exports;</script>',
+          '<script src="/js/a.js" type="text/javascript"></script>',
+          '<script type="text/javascript">var a = exports;</script>'
         ];
         
         assert.equal(scriptsMarkup, imports.join('\n') + '\n');

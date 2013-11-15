@@ -12,6 +12,10 @@ var B = 'B';
 
 /// FILE: /Users/dschnare/Documents/Workspace/vanilla/test/support/web/js/a.js
 
+var a = (function (exports) {
 //#import "./b.js"
 
-var A = 'A';
+exports['A'] = 'A';
+
+return exports; 
+})({});
