@@ -108,7 +108,7 @@ vows.describe('JavaScriptCompiler').addBatch({
         assert.equal(scriptsMarkup, imports.join('\n') + '\n');
       }
     },
-    'when compiling a script with imports in concat mode': {
+    'when compiling a script with cyclic imports in concat mode': {
       topic: function () {
         compiler.compile('./test/support/web/js/a.js', 'concat', {
           server: {
