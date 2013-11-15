@@ -33,7 +33,8 @@ Options
     root: 'relative path to server root (relative to options JSON file or the current directory)'
   },
   js: {
-    output: 'path to copy/output javascript files (relative to server root)'
+    output: 'path to copy/output javascript files (relative to server root)',
+    minify: function (script, done)
   },
   css: {
     output: 'path to copy/output stylesheet files (relative to server root)'
