@@ -8,12 +8,12 @@ vows.describe('HTMLCompiler').addBatch({
   'An HTMLCompiler': {
     'when compiling a template with no includes in debug mode': {
       topic: function () {
-        compiler.compile('./test/support/web/htm/src/a.html', 'debug', {
+        compiler.compile('./test/support/web/html/src/a.html', 'debug', {
           server: {
             root: './test/support/web'
           },
           html: {
-            output: './htm/build'
+            output: './html/build'
           },
           js: {
             output: './js/build'
@@ -22,18 +22,18 @@ vows.describe('HTMLCompiler').addBatch({
       },
       'should produce the same template': function (error, result) {
         assert(!error);
-        assert.equal(result, path.resolve('./test/support/web/htm/build/a.html'));
-        assert(fs.existsSync(path.resolve('./test/support/web/htm/build/a.html')));
+        assert.equal(result, path.resolve('./test/support/web/html/build/a.html'));
+        assert(fs.existsSync(path.resolve('./test/support/web/html/build/a.html')));
       }
     },
     'when compiling a template with includes in debug mode': {
       topic: function () {
-        compiler.compile('./test/support/web/htm/src/b.html', 'debug', {
+        compiler.compile('./test/support/web/html/src/b.html', 'debug', {
           server: {
             root: './test/support/web'
           },
           html: {
-            output: './build'
+            output: './html/build'
           },
           js: {
             output: './js/build'
@@ -49,12 +49,12 @@ vows.describe('HTMLCompiler').addBatch({
     },
     'when compiling a template with includes and scripts in debug mode': {
       topic: function () {
-        compiler.compile('./test/support/web/htm/src/d.html', 'debug', {
+        compiler.compile('./test/support/web/html/src/d.html', 'debug', {
           server: {
             root: './test/support/web'
           },
           html: {
-            output: './build'
+            output: './html/build'
           },
           js: {
             output: './js/build'
