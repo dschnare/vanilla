@@ -8,47 +8,47 @@ vows.describe('JavaScriptCompiler').addBatch({
   'A JavaScriptCompiler': {
     'when compiling a script with no imports in debug mode': {
       topic: function () {
-        compiler.compile('./test/support/web/js/d.js', 'debug', {
+        compiler.compile('./test/support/web/js/src/d.js', 'debug', {
           server: {
             root: './test/support/web'
           },
           js: {
-            output: './build'
+            output: './js/build'
           }
         }, this.callback);
       },
       'should only provide <script> elements for one script': function (error, result, scriptsMarkup) {
         assert(!error);
         assert.equal(result, '');
-        assert.equal(scriptsMarkup, '<script src="/js/d.js" type="text/javascript"></script>\n');
+        assert.equal(scriptsMarkup, '<script src="/js/src/d.js" type="text/javascript"></script>\n');
       }
     },
     'when compiling a script with no imports in concat mode': {
       topic: function () {
-        compiler.compile('./test/support/web/js/d.js', 'concat', {
+        compiler.compile('./test/support/web/js/src/d.js', 'concat', {
           server: {
             root: './test/support/web'
           },
           js: {
-            output: './build/js'
+            output: './js/build'
           }
         }, this.callback);
       },
       'should only build one script': function (error, result, scriptsMarkup) {
         assert(!error);
-        assert.equal(result, path.resolve('./test/support/web/build/js/d.js'));
+        assert.equal(result, path.resolve('./test/support/web/js/build/d.js'));
         assert(!scriptsMarkup);
         assert(fs.existsSync(result));
       }
     },
     'when compiling a script with imports in debug mode': {
       topic: function () {
-        compiler.compile('./test/support/web/js/e.js', 'debug', {
+        compiler.compile('./test/support/web/js/src/e.js', 'debug', {
           server: {
             root: './test/support/web'
           },
           js: {
-            output: './build/js'
+            output: './js/build'
           }
         }, this.callback);
       },
@@ -57,8 +57,8 @@ vows.describe('JavaScriptCompiler').addBatch({
         assert.equal(result, '');
         
         var imports = [
-          '<script src="/js/d.js" type="text/javascript"></script>',
-          '<script src="/js/e.js" type="text/javascript"></script>'
+          '<script src="/js/src/d.js" type="text/javascript"></script>',
+          '<script src="/js/src/e.js" type="text/javascript"></script>'
         ];
         
         assert.equal(scriptsMarkup, imports.join('\n') + '\n');
@@ -66,30 +66,30 @@ vows.describe('JavaScriptCompiler').addBatch({
     },
     'when compiling a script with imports in concat mode': {
       topic: function () {
-        compiler.compile('./test/support/web/js/e.js', 'concat', {
+        compiler.compile('./test/support/web/js/src/e.js', 'concat', {
           server: {
             root: './test/support/web'
           },
           js: {
-            output: './build/js'
+            output: './js/build'
           }
         }, this.callback);
       },
       'should only build one script': function (error, result, scriptsMarkup) {
         assert(!error);
-        assert.equal(result, path.resolve('./test/support/web/build/js/e.js'));
+        assert.equal(result, path.resolve('./test/support/web/js/build/e.js'));
         assert(!scriptsMarkup);
         assert(fs.existsSync(result));
       }
     },
     'when compiling a script with cyclic imports in debug mode': {
       topic: function () {
-        compiler.compile('./test/support/web/js/a.js', 'debug', {
+        compiler.compile('./test/support/web/js/src/a.js', 'debug', {
           server: {
             root: './test/support/web'
           },
           js: {
-            output: './build/js'
+            output: './js/build'
           }
         }, this.callback);
       },
@@ -98,10 +98,10 @@ vows.describe('JavaScriptCompiler').addBatch({
         assert.equal(result, '');
         
         var imports = [
-          '<script src="/js/lib/c.js" type="text/javascript"></script>',
-          '<script src="/js/b.js" type="text/javascript"></script>',
+          '<script src="/js/src/lib/c.js" type="text/javascript"></script>',
+          '<script src="/js/src/b.js" type="text/javascript"></script>',
           '<script type="text/javascript">var exports;</script>',
-          '<script src="/js/a.js" type="text/javascript"></script>',
+          '<script src="/js/src/a.js" type="text/javascript"></script>',
           '<script type="text/javascript">var a = exports;</script>'
         ];
         
@@ -110,36 +110,36 @@ vows.describe('JavaScriptCompiler').addBatch({
     },
     'when compiling a script with cyclic imports in concat mode': {
       topic: function () {
-        compiler.compile('./test/support/web/js/a.js', 'concat', {
+        compiler.compile('./test/support/web/js/src/a.js', 'concat', {
           server: {
             root: './test/support/web'
           },
           js: {
-            output: './build/js'
+            output: './js/build'
           }
         }, this.callback);
       },
       'should only build one script': function (error, result, scriptsMarkup) {
         assert(!error);
-        assert.equal(result, path.resolve('./test/support/web/build/js/a.js'));
+        assert.equal(result, path.resolve('./test/support/web/js/build/a.js'));
         assert(!scriptsMarkup);
         assert(fs.existsSync(result));
       }
     },
     'when compiling a script with imports in compress mode': {
       topic: function () {
-        compiler.compile('./test/support/web/js/a.js', 'compress', {
+        compiler.compile('./test/support/web/js/src/a.js', 'compress', {
           server: {
             root: './test/support/web'
           },
           js: {
-            output: './build/js'
+            output: './js/build'
           }
         }, this.callback);
       },
       'should only minify one script': function (error, result, scriptsMarkup) {
         assert(!error);
-        assert.equal(result, path.resolve('./test/support/web/build/js/a.min.js'));
+        assert.equal(result, path.resolve('./test/support/web/js/build/a.min.js'));
         assert(!scriptsMarkup);
         assert(fs.existsSync(result));
       }
