@@ -19,11 +19,6 @@ compile('some.js', 'compress', 'vanilla-options.js') // Compile a single JavaScr
 compile('some.css', 'compress', 'vanilla-options.js') // Compile a single StyleSheet file.
 compile('some.html', 'debug', 'vanilla-options.js') // Compile a single HTML file.
 
-NOTE: Perhaps add glob support.
-
-NOTE: HTML files can trigger JS and CSS files to be compiled
-via <v:script> and <v:link rel="stylesheet"> elements respectively.
-
 
 Options
 ----------
@@ -34,7 +29,7 @@ Options
   },
   js: {
     output: 'path to copy/output javascript files (relative to server root)',
-    minify: function (script, done)
+    minify: function (script, done) [optional -- default uses uglifyjs-2]
   },
   css: {
     output: 'path to copy/output stylesheet files (relative to server root)'
@@ -43,3 +38,14 @@ Options
     output: 'path to copy/output html files (relative to server root)'
   }
 }
+
+
+
+Roadmap
+----------
+
+1) Add Hogan + Beefcake support to HTML templates.
+2) Look into adding glob support for the first argument to compile().
+3) Look at only reading a chunk from disk at a time into a buffer. This will
+   give the tool a more predictable memory footprint.
+
