@@ -52,7 +52,7 @@ vows.describe('JavaScriptCompiler').addBatch({
           }
         }, this.callback);
       },
-      'should only provide <script> elements for one script': function (error, result, scriptsMarkup) {
+      'should only provide <script> elements for two scripts': function (error, result, scriptsMarkup) {
         assert(!error);
         assert.equal(result, '');
         
