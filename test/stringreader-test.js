@@ -28,6 +28,9 @@ vows.describe('StringReader').addBatch({
           return c === 'p';
         }), 'le sho');
       },
+      'the next char is "p"': function (topic) {
+        assert.equal(topic.peekChar(), 'p');
+      },
       'can consume "the"': function (topic) {
         assert(topic.consume('the'));
       },
