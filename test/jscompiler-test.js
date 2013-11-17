@@ -36,7 +36,7 @@ vows.describe('JavaScriptCompiler').addBatch({
       },
       'should only build one script': function (error, result, scriptsMarkup) {
         assert(!error);
-        assert.equal(result, path.resolve('./test/support/web/js/build/d.js'));
+        assert.equal(result, path.resolve('./test/support/web/js/build/d.max.js'));
         assert(!scriptsMarkup);
         assert(fs.existsSync(result));
       }
@@ -77,7 +77,7 @@ vows.describe('JavaScriptCompiler').addBatch({
       },
       'should only build one script': function (error, result, scriptsMarkup) {
         assert(!error);
-        assert.equal(result, path.resolve('./test/support/web/js/build/e.js'));
+        assert.equal(result, path.resolve('./test/support/web/js/build/e.max.js'));
         assert(!scriptsMarkup);
         assert(fs.existsSync(result));
       }
@@ -121,7 +121,7 @@ vows.describe('JavaScriptCompiler').addBatch({
       },
       'should only build one script': function (error, result, scriptsMarkup) {
         assert(!error);
-        assert.equal(result, path.resolve('./test/support/web/js/build/a.js'));
+        assert.equal(result, path.resolve('./test/support/web/js/build/a.max.js'));
         assert(!scriptsMarkup);
         assert(fs.existsSync(result));
       }

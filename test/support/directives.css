@@ -1,0 +1,12 @@
+/* @@import "somefile.css" */
+
+p {
+  color: red;
+}
+
+/* @@debug */
+p {
+  color: blue;
+  font-weight: bold;
+}
+/* @@enddebug */
