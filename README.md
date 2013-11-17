@@ -44,8 +44,9 @@ Options
 Roadmap
 ----------
 
-1) Add Hogan + Beefcake support to HTML templates.
-2) Look into adding glob support for the first argument to compile().
-3) Look at only reading a chunk from disk at a time into a buffer. This will
+1) Add CSS support.
+2) Add Hogan + Beefcake support to HTML templates.
+3) Look into adding glob support for the first argument to compile().
+4) Look at only reading a chunk from disk at a time into a buffer. This will
    give the tool a more predictable memory footprint.
 
