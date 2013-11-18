@@ -25,7 +25,7 @@ Options
 
 {
   server: {
-    root: 'relative path to server root (relative to options JSON file or the current directory)'
+    root: 'relative/absolute path to server root (relative to options JSON file or the current directory)'
   },
   js: {
     output: 'path to copy/output javascript files (relative to server root)',
