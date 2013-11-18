@@ -29,10 +29,11 @@ Options
   },
   js: {
     output: 'path to copy/output javascript files (relative to server root)',
-    minify: function (script, done) [optional -- default uses uglifyjs-2]
+    minify: function (script, done) [optional -- default uses yui]
   },
   css: {
-    output: 'path to copy/output stylesheet files (relative to server root)'
+    output: 'path to copy/output stylesheet files (relative to server root)',
+    minify: function (script, done) [optional -- default uses yui]
   },
   html: {
     output: 'path to copy/output html files (relative to server root)'
