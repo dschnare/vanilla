@@ -1,7 +1,7 @@
 {
   "name": "vanilla",
   "version": "0.0.2",
-  "description": "A simple HTML, JS and CSS templating library.",
+  "description": "A simple HTML, JS and CSS templating framework.",
   "main": "index.js",
   "scripts": {
     "test": "vows test/*-test.js"
