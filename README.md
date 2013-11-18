@@ -33,7 +33,7 @@ Options
   },
   css: {
     output: 'path to copy/output stylesheet files (relative to server root)',
-    minify: function (script, done) [optional -- default uses yui]
+    minify: function (stylesheet, done) [optional -- default uses yui]
   },
   html: {
     output: 'path to copy/output html files (relative to server root)'
