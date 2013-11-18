@@ -47,8 +47,9 @@ Roadmap
 1) (COMPLETE) Add CSS support.
 2) (COMPLETE) Add Hogan + Beefcake support to HTML templates.
 3) Look into adding glob support for the first argument to compile().
-4) Refactor each compiler so that only one tokenizer is created, also instead of modifying
+4) Add ability to pass a JSON object to an HTML file that is being included with <v:include>.
+5) Refactor each compiler so that only one tokenizer is created, also instead of modifying
    the source text, produce a new text so that the token markers are still valid.
-5) Look at only reading a chunk from disk at a time into a buffer. This will
+6) Look at only reading a chunk from disk at a time into a buffer. This will
    give the tool a more predictable memory footprint.
 
