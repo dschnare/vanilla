@@ -1,14 +1,17 @@
-var path, util;
+var path, util, glob;
 
 path = require('path');
 util = require('./lib/util');
+glob = require('glob');
 
 /////////
 // API //
 /////////
 
 exports.compile = function (filepath, mode, options, callback) {
-  var optionsFilepath, compiler;
+  var optionsFilepath, files;
+  
+  files = glob.sync(filepath);
   
   if (typeof callback !== 'function') callback = function () {};
   
@@ -37,10 +40,27 @@ exports.compile = function (filepath, mode, options, callback) {
   options.css.output = path.resolve(options.server.root, options.css.output);
   options.html.output = path.resolve(options.server.root, options.html.output);
   
-  compiler = selectVanillaCompiler(path.extname(filepath));
-  if (compiler) {
-    compiler.compile(filepath, mode, options, callback);
+  function compileNextFile(completeArgs) {
+    if (files.length) {
+      var filepath, compiler;
+      
+      filepath = files.pop();
+      compiler = selectVanillaCompiler(path.extname(filepath));
+      if (compiler) {
+        compiler.compile(filepath, mode, options, function (error) {
+          if (error) {
+            callback(error);
+          } else {
+            compileNextFile(([]).slice.call(arguments));
+          }
+        });
+      }
+    } else {
+      callback.apply(undefined, completeArgs);
+    }
   }
+
+  compileNextFile([]);
 };
 
 //////////////////////
