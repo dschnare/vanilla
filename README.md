@@ -45,8 +45,10 @@ Roadmap
 ----------
 
 1) (COMPLETE) Add CSS support.
-2) Add Hogan + Beefcake support to HTML templates.
+2) (COMPLETE) Add Hogan + Beefcake support to HTML templates.
 3) Look into adding glob support for the first argument to compile().
-4) Look at only reading a chunk from disk at a time into a buffer. This will
+4) Refactor each compiler so that only one tokenizer is created and instead of modifying
+   the source text, produce new text so that the token markers are still valid.
+5) Look at only reading a chunk from disk at a time into a buffer. This will
    give the tool a more predictable memory footprint.
 
