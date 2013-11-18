@@ -27,7 +27,9 @@
   },
   "dependencies": {
     "wrench": "*",
-    "yuicompressor": "*"
+    "yuicompressor": "*",
+    "hogan.js": "git://github.com/twitter/hogan.js.git",
+    "beefcake.js": "git://github.com/dschnare/beefcake.js.git"
   },
   "engines": {
     "node": ">=0.10.20"

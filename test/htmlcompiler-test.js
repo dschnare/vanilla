@@ -17,6 +17,9 @@ vows.describe('HTMLCompiler').addBatch({
           },
           js: {
             output: './js/build'
+          },
+          css: {
+            output: './css/build'
           }
         }, this.callback);
       },
@@ -37,6 +40,9 @@ vows.describe('HTMLCompiler').addBatch({
           },
           js: {
             output: './js/build'
+          },
+          css: {
+            output: './css/build'
           }
         }, this.callback);
       },
@@ -58,6 +64,9 @@ vows.describe('HTMLCompiler').addBatch({
           },
           js: {
             output: './js/build'
+          },
+          css: {
+            output: './css/build'
           }
         }, this.callback);
       },
