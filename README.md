@@ -24,19 +24,20 @@ Options
 ----------
 
 {
-  server: {
-    root: 'relative/absolute path to server root (relative to options JSON file or the current directory)'
-  },
+  serverRoot 'relative/absolute path to server root (relative to options JSON file or the current directory)'
+  webRoot: 'relative/absolute path to web root (relative to options JSON file or the current directory)',
   js: {
-    output: 'path to copy/output javascript files (relative to server root)',
     minify: function (script, done) [optional -- default uses yui]
   },
   css: {
-    output: 'path to copy/output stylesheet files (relative to server root)',
     minify: function (stylesheet, done) [optional -- default uses yui]
   },
   html: {
-    output: 'path to copy/output html files (relative to server root)'
+    context: { object that servers as the mustache context }, [optional]
+    partials: { object containing mustache partials }, [optional]
+    including: true/false - indicates that this HTML file is being included so don't write to disk, [optional]
+    blocks: { hash of all blocks to have inserted into this HTML layout -- these are objects with a 'body' and an 'operation' property } [optional]
+      (i.e. { body: 'Hello', operation: 'append' })
   }
 }
 
