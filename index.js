@@ -13,7 +13,10 @@ exports.compile = function (filepath, mode, options, callback) {
   
   files = glob.sync(filepath);
   
-  if (typeof callback !== 'function') callback = function () {};
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
   
   if (typeof options === 'string') {
     optionsFilepath = path.resolve(options);
@@ -21,24 +24,15 @@ exports.compile = function (filepath, mode, options, callback) {
   }
   
   options = util.pojo(options, {
-    server: {
-      root: './'
-    },
-    js: {
-      output: './build/js'
-    },
-    css: {
-      output: './build/css'
-    },
-    html: {
-      output: './build'
-    }
+    projectRoot: './src',
+    webRoot: './web',
+    js: {},
+    css: {},
+    html: {}
   });
   
-  options.server.root = path.resolve(optionsFilepath || path.resolve('.'), options.server.root);
-  options.js.output = path.resolve(options.server.root, options.js.output);
-  options.css.output = path.resolve(options.server.root, options.css.output);
-  options.html.output = path.resolve(options.server.root, options.html.output);
+  options.projectRoot = optionsFilepath ? path.dirname(optionsFilepath) : path.resolve(options.projectRoot);
+  options.webRoot = path.resolve(optionsFilepath ? path.dirname(optionsFilepath) : path.resolve('.'), options.webRoot);
   
   function compileNextFile(completeArgs) {
     if (files.length) {
