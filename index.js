@@ -23,6 +23,8 @@ exports.compile = function (filepath, mode, options, callback) {
     options = require(path.relative(__filename, path));
   }
   
+  if (typeof callback !== 'function') callback = function () {};
+  
   options = util.pojo(options, {
     projectRoot: './src',
     webRoot: './web',
