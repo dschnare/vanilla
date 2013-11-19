@@ -316,4 +316,4 @@ Roadmap
    the source text, produce a new text so that the token markers are still valid.
 6. Look at only reading a chunk from disk at a time into a buffer. This will
    give the tool a more predictable memory footprint.
-
+7. Look at optimizing.
