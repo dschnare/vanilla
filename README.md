@@ -36,18 +36,21 @@ bound to a global variable with the same name as the basename of the imported fi
 For example:
 
 a.js
+
     //#import "./b.js"
     var a = 'A';
 
 b.js
+
     //#import "./c.js"
     exports.B = 'B';
   
 c.js
+
     var c = 'C';
   
-
 result
+
     var c = 'C';
     
     //#import "./c.js"
@@ -71,18 +74,22 @@ in such a way so that `exports` is still bound to an object and will be availabl
 For example:
 
 a.js
+
     //#import "./b.js"
     var a = 'A';
 
 b.js
+
     //#import "./c.js"
     exports.B = 'B';
   
 c.js
+
     var c = 'C';
   
 
 result
+
     <script src="/srcdir/c.js" type="text/javascript"></script>
     <script type="text/javascript">var exports = {};</script>
     <script src="/srcdir/b.js" type="text/javascript"></script>
@@ -101,18 +108,21 @@ Imports a CSS file where the file path is relative to the file performing the im
 For example:
 
 a.css
+
     /* @@import "./b.css" */
     p { color: red; }
 
 b.js
+
     /* @@import "./c.css" */
     p { color: blue; }
   
 c.js
+
     p { color: green; }
   
-
 result
+
     p { color: green; }
     
     /* @@import "./c.css" */
@@ -134,18 +144,21 @@ Stylesheets are referenced in `<link>` elements where their `href` attribute poi
 For example:
 
 a.css
+
     /* @@import "./b.css" */
     p { color: red; }
 
 b.js
+
     /* @@import "./c.css" */
     p { color: blue; }
   
 c.js
+
     p { color: green; }
   
-
 result
+
     <link rel="stylesheet" href="/srcdir/c.css" />
     <link rel="stylesheet" href="/srcdir/b.css" />
     <link rel="stylesheet" href="/srcdir/a.css" />
@@ -153,6 +166,7 @@ result
 
 
 **HTML**
+
     <v:data> ... JSON ... </v:data>
 
 Specifies a block of JSON data to use as the context when parsing the HTML template with Hogan.js+Beefcake.js.
@@ -182,6 +196,7 @@ Supported block operations are the following:
 Examples:
 
 a.html
+
     <v:data>{"title":"Hello"}</v:data>
     <v:extends file="./layout.html" />
     <v:block name="body">
@@ -193,10 +208,11 @@ a.html
 
 
 main.js
+
     var Main = {};
 
-
 layout.html
+
     <html>
       <head>
         <title>{{title}} World!</title>
@@ -219,6 +235,7 @@ layout.html
 
 
 result (compiled in compress mode)
+
     <html>
         <head>
           <title>Hello World!</title>
