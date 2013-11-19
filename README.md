@@ -25,6 +25,8 @@ Learn
 
 **JavaScript**
 
+* * *
+
     //#import "file[.js]"
 
 Imports a JavaScript file where the file path is relative to the file performing the import.
@@ -101,6 +103,8 @@ result
 
 **CSS**
 
+* * *
+
     /* @@import "file[.js]" */
 
 Imports a CSS file where the file path is relative to the file performing the import.
@@ -166,6 +170,8 @@ result
 
 
 **HTML**
+
+* * *
 
     <v:data> ... JSON ... </v:data>
 
