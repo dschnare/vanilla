@@ -194,7 +194,7 @@ These directives are used for specifying layouts and layout blocks. Layout block
 
 Supported block operations are the following:
 
-- replace (default) = replace the layout block of the same name
+- replace (default) - replace the layout block of the same name
 - prepend - prepend to the layout block of the same name
 - append - append to the layout block of the same name
 
@@ -282,8 +282,10 @@ Examples:
 **Options**
 
     {
-      serverRoot 'relative/absolute path to server root (relative to options JSON file or the current directory)'
-      webRoot: 'relative/absolute path to web root (relative to options JSON file or the current directory)',
+      serverRoot 'relative/absolute path to server root 
+          (relative to options JSON file or the current directory)'
+      webRoot: 'relative/absolute path to web root 
+          (relative to options JSON file or the current directory)',
       js: {
         minify: function (script, done) [optional -- default uses yui]
       },
@@ -293,8 +295,10 @@ Examples:
       html: {
         context: { object that servers as the mustache context }, [optional]
         partials: { object containing mustache partials }, [optional]
-        including: true/false - indicates that this HTML file is being included so don't write to disk, [optional]
-        blocks: { hash of all blocks to have inserted into this HTML layout -- these are objects with a 'body' and an 'operation' property } [optional]
+        including: true/false - indicates that this HTML file is being included
+          so don't write to disk, [optional]
+        blocks: { hash of all blocks to have inserted into this HTML layout -- 
+          these are objects with a 'body' and an 'operation' property } [optional]
           (i.e. { body: 'Hello', operation: 'append' })
       }
     }
