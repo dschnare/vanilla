@@ -101,7 +101,7 @@ result
 
 **CSS**
 
-/* @@import "file[.js]" */
+    /* @@import "file[.js]" */
 
 Imports a CSS file where the file path is relative to the file performing the import.
 
@@ -169,7 +169,7 @@ result
 
     <v:data> ... JSON ... </v:data>
 
-Specifies a block of JSON data to use as the context when parsing the HTML template with Hogan.js+Beefcake.js.
+Specifies a block of JSON data to use as the context when parsing the HTML template with [Hogan.js](http://twitter.github.io/hogan.js/)+[Beefcake.js](https://github.com/dschnare/beefcake.js).
     
     <v:script src="file.js" />
     <v:stylesheet src="file.css" />
@@ -184,7 +184,7 @@ Directive to include another HTML template into this one with or without a speci
     <v:extends file="" />
     <v:block name="" [operation=""]> ... HTML ... </v:block>
 
-These directives are used for specifying layouts and layout blocks. Layout blocks in a layout can be replaced, appended to or prepended to from an extending HTML template. In addition all blocks are exposed as partials to Hogan.js+Beefcake.js.
+These directives are used for specifying layouts and layout blocks. Layout blocks in a layout can be replaced, appended to or prepended to from an extending HTML template. In addition all blocks are exposed as partials to [Hogan.js](http://twitter.github.io/hogan.js/)+[Beefcake.js](https://github.com/dschnare/beefcake.js).
 
 Supported block operations are the following:
 
