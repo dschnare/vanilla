@@ -392,7 +392,7 @@ Roadmap
 1. (COMPLETE) Add CSS support.
 2. (COMPLETE) Add Hogan + Beefcake support to HTML templates.
 3. (COMPLETE) Look into adding glob support for the first argument to compile().
-4. (COMPLETE) Add ability to pass a JSON object to an HTML file that is being included with <v:include>.
+4. (COMPLETE) Add ability to pass a JSON object to an HTML file that is being included with `<v:include>`.
 5. (COMPLETE) Add support for shorthand block replacement via the `<v:append name="">`, `<v:prepend name="">` and `<v:replace name="">` elements similar to Jade syntax.
 6. Better error reporting.
 7. Refactor each compiler so that only one tokenizer is created, also instead of modifying
