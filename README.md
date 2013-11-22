@@ -190,6 +190,12 @@ Directive to include another HTML template into this one with or without a speci
     <v:extends file="" />
     <v:block name="" [operation=""]> ... HTML ... </v:block>
 
+Shorthand for `<v:block name="" operation=""> ... HTML ... </v:block>`:
+
+    <v:append name=""> ... HTML ... </v:append>
+    <v:prepend name=""> ... HTML ... </v:prepend>
+    <v:replace name=""> ... HTML ... </v:replace>
+
 These directives are used for specifying layouts and layout blocks. Layout blocks in a layout can be replaced, appended to or prepended to from an extending HTML template. In addition all blocks are exposed as partials to [Hogan.js](http://twitter.github.io/hogan.js/)+[Beefcake.js](https://github.com/dschnare/beefcake.js).
 
 Supported block operations are the following:
@@ -387,7 +393,7 @@ Roadmap
 2. (COMPLETE) Add Hogan + Beefcake support to HTML templates.
 3. (COMPLETE) Look into adding glob support for the first argument to compile().
 4. (COMPLETE) Add ability to pass a JSON object to an HTML file that is being included with <v:include>.
-5. (COMPLETE) Add support for shorthand block replacement via the <v:append name="">, <v:prepend name=""> and <v:replace name=""> elements similar to Jade syntax.
+5. (COMPLETE) Add support for shorthand block replacement via the `<v:append name="">`, `<v:prepend name="">` and `<v:replace name="">` elements similar to Jade syntax.
 6. Better error reporting.
 7. Refactor each compiler so that only one tokenizer is created, also instead of modifying
    the source text, produce a new text so that the token markers are still valid.
