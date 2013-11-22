@@ -13,8 +13,8 @@ Usage
 ----------
 
     require('vanilla').compile('./src/*.html', {
-      projectRoot: './web/src', // our source folder is in web/ so we can debug CSS and JS
-      serverRoot: './web'
+      projectRoot: './src',
+      webRoot: './web'
     }, function (error) {
       if (error) throw error;
     });
@@ -23,7 +23,7 @@ Usage
 Learn
 ----------
 
-**JavaScript**
+** JavaScript **
 
 * * *
 
@@ -62,12 +62,12 @@ result
     var a = 'A';
 
 
-*Cycles*
+* Cycles *
 
 Cyclic imports are detected and are prevented.
 
 
-*Debugging*
+* Debugging *
 
 During `debug` mode scripts cannot be wrapped, but instead are referenced in `<script>` elements
 where their `src` attribute points to the original source script. These elements are included
@@ -101,7 +101,7 @@ result
     
 
 
-**CSS**
+** CSS **
 
 * * *
 
@@ -136,12 +136,12 @@ result
     p { color: red; }
 
 
-*Cycles*
+* Cycles *
 
 Cyclic imports are detected and are prevented.
 
 
-*Debugging*
+* Debugging *
 
 Stylesheets are referenced in `<link>` elements where their `href` attribute points to the original source stylesheet.
 
@@ -169,7 +169,7 @@ result
 
 
 
-**HTML**
+** HTML **
 
 * * *
 
@@ -279,12 +279,43 @@ Examples:
     compile('some.html', 'debug', 'vanilla-options.js')
 
 
-**Options**
+** Modes **
+
+The following modes are supported and have the following affect on JavaScript and CSS compilation:
+
+* debug *
+
+When compiling JavaScript files in `debug` mode no concatenation or compilation actually occurs. The callback has the following signature: `function (error, filename, markup)`
+
+Where `filename` is normally the file that was written to the `webRoot` will be set to the empty string and instead the `markup` argument will have the HTML markup needed to include the source scripts into an HTML document. This same behaviour occurs when compiling CSS files in `debug` mode.
+
+* compress *
+
+Concatenates and minifies then writes to the `webRoot`. Keeps the same base path relative to the `projectRoo` when writing to `webRoot`.
+
+When compiling JavaScript files in `compress` mode all import directives are crawled and the dependencies are concatenated then minified and finally saved to the `webRoot` with an extension `.min.js`. When saving the minified script the base path portion that is relative to the `projectRoot` is created in the `webRoot`.
+
+The callback has the following signature: `function (error, filename)`
+
+Where `filename` is the file that was written to the `webRoot`. This same behaviour occurs when compiling CSS files in `compress` mode only their extension will be `.min.css`.
+
+* concat (default) *
+
+Concatenates then writes to the `webRoot`. Keeps the same base path relative to the `projectRoot` when writing to `webRoot`.
+
+When compiling JavaScript files in `concat` mode all import directives are crawled and the dependencies are concatenated then saved to the `webRoot` with an extension `.max.js`. When saving the concatenated script the base path portion that is relative to the `projectRoot` is created in the `webRoot`.
+
+The callback has the following signature: `function (error, filename)`
+
+Where `filename` is the file that was written to the `webRoot`. This same behaviour occurs when compiling CSS files in `compress` mode only their extension will be `.max.css`.
+
+
+** Options **
 
     {
-      serverRoot 'relative/absolute path to server root 
+      projectRoot 'relative/absolute path to project root 
           (relative to options JSON file or the current directory)'
-      webRoot: 'relative/absolute path to web root 
+      webRoot: 'relative/absolute path to web root where all files will be written to
           (relative to options JSON file or the current directory)',
       js: {
         minify: function (script, done) [optional -- default uses yui]
@@ -293,7 +324,7 @@ Examples:
         minify: function (stylesheet, done) [optional -- default uses yui]
       },
       html: {
-        context: { object that servers as the mustache context }, [optional]
+        context: { object that servers as the mustache context (must be an Object) }, [optional]
         partials: { object containing mustache partials }, [optional]
         including: true/false - indicates that this HTML file is being included
           so don't write to disk, [optional]
@@ -316,4 +347,3 @@ Roadmap
    the source text, produce a new text so that the token markers are still valid.
 6. Look at only reading a chunk from disk at a time into a buffer. This will
    give the tool a more predictable memory footprint.
-7. Look at optimizing.
