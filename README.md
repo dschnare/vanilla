@@ -23,6 +23,10 @@ Usage
 Learn
 ----------
 
+The vanillar templating library provides a single `compile()` function that can be used to compile JavaScript, CSS and HTML files. When compiling each file type the library will parse directives of a particular format and act on them. The following describes all supported directives for each file type.
+
+
+
 **JavaScript**
 
 * * *
