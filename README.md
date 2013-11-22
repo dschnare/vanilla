@@ -23,7 +23,7 @@ Usage
 Learn
 ----------
 
-** JavaScript **
+**JavaScript**
 
 * * *
 
@@ -62,12 +62,12 @@ result
     var a = 'A';
 
 
-* Cycles *
+*Cycles*
 
 Cyclic imports are detected and are prevented.
 
 
-* Debugging *
+*Debugging*
 
 During `debug` mode scripts cannot be wrapped, but instead are referenced in `<script>` elements
 where their `src` attribute points to the original source script. These elements are included
@@ -101,7 +101,7 @@ result
     
 
 
-** CSS **
+**CSS**
 
 * * *
 
@@ -136,12 +136,12 @@ result
     p { color: red; }
 
 
-* Cycles *
+*Cycles*
 
 Cyclic imports are detected and are prevented.
 
 
-* Debugging *
+*Debugging*
 
 Stylesheets are referenced in `<link>` elements where their `href` attribute points to the original source stylesheet.
 
@@ -169,7 +169,7 @@ result
 
 
 
-** HTML **
+**HTML**
 
 * * *
 
@@ -292,11 +292,12 @@ Examples:
     compile('*.html', 'debug', { ... options ... }, callback)
 
 
-** Modes **
+**Modes**
 
 The following modes are supported and have the following affect on JavaScript and CSS compilation:
 
-* debug *
+
+*debug*
 
 When compiling JavaScript files in `debug` mode no concatenation or compilation actually occurs. The callback has the following signature: `function (error, filename, markup)`
 
@@ -312,7 +313,8 @@ Example:
       // markup is HTML markup to include the scripts/styleshets from the projectRoot
     });
 
-* compress *
+
+*compress*
 
 Concatenates and minifies then writes to the `webRoot`. Keeps the same base path relative to the `projectRoo` when writing to `webRoot`.
 
@@ -331,7 +333,8 @@ Example:
       // filename is the written script/stylesheet to the webRoot
     });
 
-* concat (default) *
+
+*concat (default)*
 
 Concatenates then writes to the `webRoot`. Keeps the same base path relative to the `projectRoot` when writing to `webRoot`.
 
@@ -351,7 +354,7 @@ Example:
     });
 
 
-** Options **
+**Options**
 
     {
       projectRoot 'relative/absolute path to project root [default ./src]
