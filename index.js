@@ -56,8 +56,7 @@ exports.compile = function (filepath, mode, options, callback) {
   options.webRoot = path.resolve(optionsFilepath ? path.dirname(optionsFilepath) : path.resolve('.'), options.webRoot);
   
   files = glob.sync(filepath, {
-    cwd: options.projectRoot,
-    root: options.projectRoot
+    cwd: options.projectRoot
   });
   
   function compileNextFile(completeArgs) {
