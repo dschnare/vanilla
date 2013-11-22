@@ -14,7 +14,7 @@ vows.describe('CSSCompiler').addBatch({
         }, this.callback);
       },
       'should only provide <link> elements for one stylesheet': function (error, result, markup) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, '');
         assert.equal(markup, '<link rel="stylesheet" href="/../src/css/d.css" />\n');
       }
@@ -27,7 +27,7 @@ vows.describe('CSSCompiler').addBatch({
         }, this.callback);
       },
       'should only build one stylesheet': function (error, result, markup) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, path.resolve('./test/support/project/web/css/d.max.css'));
         assert(!markup);
         assert(fs.existsSync(result));
@@ -41,7 +41,7 @@ vows.describe('CSSCompiler').addBatch({
         }, this.callback);
       },
       'should only provide <link> elements for two stylesheets': function (error, result, markup) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, '');
         
         var imports = [
@@ -60,7 +60,7 @@ vows.describe('CSSCompiler').addBatch({
         }, this.callback);
       },
       'should only build one stylesheet': function (error, result, markup) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, path.resolve('./test/support/project/web/css/e.max.css'));
         assert(!markup);
         assert(fs.existsSync(result));
@@ -74,7 +74,7 @@ vows.describe('CSSCompiler').addBatch({
         }, this.callback);
       },
       'should only provide <link> elements for each unique stylesheet': function (error, result, markup) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, '');
         
         var imports = [
@@ -94,7 +94,7 @@ vows.describe('CSSCompiler').addBatch({
         }, this.callback);
       },
       'should only build one stylesheet': function (error, result, markup) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, path.resolve('./test/support/project/web/css/a.max.css'));
         assert(!markup);
         assert(fs.existsSync(result));
@@ -108,7 +108,7 @@ vows.describe('CSSCompiler').addBatch({
         }, this.callback);
       },
       'should only minify one script': function (error, result, markup) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, path.resolve('./test/support/project/web/css/a.min.css'));
         assert(!markup);
         assert(fs.existsSync(result));

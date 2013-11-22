@@ -14,7 +14,7 @@ vows.describe('JavaScriptCompiler').addBatch({
         }, this.callback);
       },
       'should only provide <script> elements for one script': function (error, result, scriptsMarkup) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, '');
         assert.equal(scriptsMarkup, '<script src="/../src/js/d.js" type="text/javascript"></script>\n');
       }
@@ -27,7 +27,7 @@ vows.describe('JavaScriptCompiler').addBatch({
         }, this.callback);
       },
       'should only build one script': function (error, result, scriptsMarkup) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, path.resolve('./test/support/project/web/js/d.max.js'));
         assert(!scriptsMarkup);
         assert(fs.existsSync(result));
@@ -41,7 +41,7 @@ vows.describe('JavaScriptCompiler').addBatch({
         }, this.callback);
       },
       'should only provide <script> elements for two scripts': function (error, result, scriptsMarkup) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, '');
         
         var imports = [
@@ -60,7 +60,7 @@ vows.describe('JavaScriptCompiler').addBatch({
         }, this.callback);
       },
       'should only build one script': function (error, result, scriptsMarkup) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, path.resolve('./test/support/project/web/js/e.max.js'));
         assert(!scriptsMarkup);
         assert(fs.existsSync(result));
@@ -74,7 +74,7 @@ vows.describe('JavaScriptCompiler').addBatch({
         }, this.callback);
       },
       'should only provide <script> elements for each unique script': function (error, result, scriptsMarkup) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, '');
         
         var imports = [
@@ -96,7 +96,7 @@ vows.describe('JavaScriptCompiler').addBatch({
         }, this.callback);
       },
       'should only build one script': function (error, result, scriptsMarkup) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, path.resolve('./test/support/project/web/js/a.max.js'));
         assert(!scriptsMarkup);
         assert(fs.existsSync(result));
@@ -110,7 +110,7 @@ vows.describe('JavaScriptCompiler').addBatch({
         }, this.callback);
       },
       'should only minify one script': function (error, result, scriptsMarkup) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, path.resolve('./test/support/project/web/js/a.min.js'));
         assert(!scriptsMarkup);
         assert(fs.existsSync(result));

@@ -384,7 +384,9 @@ Roadmap
 2. (COMPLETE) Add Hogan + Beefcake support to HTML templates.
 3. (COMPLETE) Look into adding glob support for the first argument to compile().
 4. (COMPLETE) Add ability to pass a JSON object to an HTML file that is being included with <v:include>.
-5. Refactor each compiler so that only one tokenizer is created, also instead of modifying
+5. (COMPLETE) Add support for shorthand block replacement via the <v:append name="">, <v:prepend name=""> and <v:replace name=""> elements similar to Jade syntax.
+6. Better error reporting.
+7. Refactor each compiler so that only one tokenizer is created, also instead of modifying
    the source text, produce a new text so that the token markers are still valid.
-6. Look at only reading a chunk from disk at a time into a buffer. This will
+8. Look at only reading a chunk from disk at a time into a buffer. This will
    give the tool a more predictable memory footprint.

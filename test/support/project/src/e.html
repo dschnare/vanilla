@@ -10,13 +10,13 @@
 Hello World! [{{> skipped}}]
 </v:block>
 
-<v:block name="body2" operation="prepend">Hello </v:block>
+<v:prepend name="body2" operation="prepend">Hello </v:prepend>
 
-<v:block name="footer" operation="append">
+<v:append name="footer">
   <div class="copyright">
     Copyright 2014
   </div>
-</v:block>
+</v:append>
 
 <v:block name="skipped">
 This block will not be rendered.

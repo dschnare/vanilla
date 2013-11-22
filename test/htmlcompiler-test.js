@@ -14,7 +14,7 @@ vows.describe('HTMLCompiler').addBatch({
         }, this.callback);
       },
       'should produce the same template': function (error, result) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, path.resolve('./test/support/project/web/a.html'));
         assert(fs.existsSync(path.resolve('./test/support/project/web/a.html')));
       }
@@ -27,7 +27,7 @@ vows.describe('HTMLCompiler').addBatch({
         }, this.callback);
       },
       'should produce a template with the includes': function (error, result) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, path.resolve('./test/support/project/web/b.html'));
         assert(fs.existsSync(path.resolve('./test/support/project/web/b.html')));
         assert(!fs.existsSync(path.resolve('./test/support/project/web/c.html')));
@@ -41,7 +41,7 @@ vows.describe('HTMLCompiler').addBatch({
         }, this.callback);
       },
       'should produce a template with the includes and scripts': function (error, result) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, path.resolve('./test/support/project/web/d.html'));
         assert(fs.existsSync(path.resolve('./test/support/project/web/d.html')));
       }
@@ -54,7 +54,7 @@ vows.describe('HTMLCompiler').addBatch({
         }, this.callback);
       },
       'should produce a template based on the extended template': function (error, result) {
-        assert(!error);
+        if (error) throw error;
         assert.equal(result, path.resolve('./test/support/project/web/e.html'));
         assert(fs.existsSync(path.resolve('./test/support/project/web/e.html')));
       }
