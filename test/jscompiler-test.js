@@ -79,10 +79,8 @@ vows.describe('JavaScriptCompiler').addBatch({
         
         var imports = [
           '<script src="/../src/js/lib/c.js" type="text/javascript"></script>',
-          '<script src="/../src/js/b.js" type="text/javascript"></script>',
-          '<script type="text/javascript">var exports;</script>',
-          '<script src="/../src/js/a.js" type="text/javascript"></script>',
-          '<script type="text/javascript">var a = exports;</script>'
+          '<script src="/../src/js/b/index.js" type="text/javascript"></script>',
+          '<script src="/../src/js/a.js" type="text/javascript"></script>'
         ];
         
         assert.equal(scriptsMarkup, imports.join('\n') + '\n');

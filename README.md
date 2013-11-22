@@ -34,10 +34,6 @@ The vanillar templating library provides a single `compile()` function that can 
     //#import "file[.js]"
 
 Imports a JavaScript file where the file path is relative to the file performing the import.
-When a script is imported it can be written in two ways a) as a typcial global browser script or
-b) a module. A module script assigns properties to `exports`. If the imported script is a module then
-it will be wrapped in a scope that has `exports` bound to an object. That object will then be
-bound to a global variable with the same name as the basename of the imported file.
 
 For example:
 
@@ -48,10 +44,10 @@ a.js
 
 b.js
 
-    //#import "./c.js"
-    exports.B = 'B';
+    //#import "./c"
+    var B = 'B';
   
-c.js
+c/index.js
 
     var c = 'C';
   
@@ -59,10 +55,10 @@ result
 
     var c = 'C';
     
-    //#import "./c.js"
-    var b = (function (exports) { exports.B = 'B'; return exports; }({}));
+    //#import "./c"
+    var B = 'B';
     
-    //#import "./b.js"
+    //#import "../b.js"
     var a = 'A';
 
 
@@ -74,8 +70,7 @@ Cyclic imports are detected and are prevented.
 *Debugging*
 
 During `debug` mode scripts cannot be wrapped, but instead are referenced in `<script>` elements
-where their `src` attribute points to the original source script. These elements are included
-in such a way so that `exports` is still bound to an object and will be available to other scripts.
+where their `src` attribute points to the original source script.
 
 For example:
 
@@ -87,7 +82,7 @@ a.js
 b.js
 
     //#import "./c.js"
-    exports.B = 'B';
+    var B = 'B';
   
 c.js
 
@@ -97,12 +92,9 @@ c.js
 result
 
     <script src="/srcdir/c.js" type="text/javascript"></script>
-    <script type="text/javascript">var exports = {};</script>
     <script src="/srcdir/b.js" type="text/javascript"></script>
-    <script type="text/javascript">var b = exports;</script>
     <script src="/srcdir/a.js" type="text/javascript"></script>
-    
-    
+
 
 
 **CSS**

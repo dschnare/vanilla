@@ -1,3 +1,3 @@
-//#import "./b.js"
+//#import "./b"
 
 exports['A'] = 'A';
