@@ -8,7 +8,7 @@ vows.describe('CSSCompiler').addBatch({
   'A CSSCompiler': {
     'when compiling a stylesheet with no imports in debug mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/css/d.css', 'debug', {
+        compiler.compile('./css/d.css', 'debug', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);
@@ -21,7 +21,7 @@ vows.describe('CSSCompiler').addBatch({
     },
     'when compiling a stylesheet with no imports in concat mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/css/d.css', 'concat', {
+        compiler.compile('./css/d.css', 'concat', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);
@@ -35,7 +35,7 @@ vows.describe('CSSCompiler').addBatch({
     },
     'when compiling a stylesheet with imports in debug mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/css/e.css', 'debug', {
+        compiler.compile('./css/e.css', 'debug', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);
@@ -54,7 +54,7 @@ vows.describe('CSSCompiler').addBatch({
     },
     'when compiling a stylesheet with imports in concat mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/css/e.css', 'concat', {
+        compiler.compile('./css/e.css', 'concat', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);
@@ -68,7 +68,7 @@ vows.describe('CSSCompiler').addBatch({
     },
     'when compiling a stylesheet with cyclic imports in debug mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/css/a.css', 'debug', {
+        compiler.compile('./css/a.css', 'debug', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);
@@ -88,7 +88,7 @@ vows.describe('CSSCompiler').addBatch({
     },
     'when compiling a stylesheet with cyclic imports in concat mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/css/a.css', 'concat', {
+        compiler.compile('./css/a.css', 'concat', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);
@@ -102,7 +102,7 @@ vows.describe('CSSCompiler').addBatch({
     },
     'when compiling a stylesheet with imports in compress mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/css/a.css', 'compress', {
+        compiler.compile('./css/a.css', 'compress', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);

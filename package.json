@@ -1,6 +1,6 @@
 {
   "name": "vanilla",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "A simple HTML, JS and CSS templating framework.",
   "main": "index.js",
   "scripts": {

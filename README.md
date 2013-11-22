@@ -12,7 +12,7 @@ Install
 Usage
 ----------
 
-    require('vanilla').compile('./src/*.html', {
+    require('vanilla').compile('*.html', {
       projectRoot: './src',
       webRoot: './web'
     }, function (error) {
@@ -267,16 +267,29 @@ result (compiled in compress mode)
 API
 ----------
 
+    compile(filepath)
+    compile(filepath, mode)
+    compile(filepath, options)
+    compile(filepath, callback)
+    compile(filepath, mode, callback)
+    compile(filepath, options, callback)
     compile(filepath, mode, options, callback)
-    compile(filepath, mode, path_to_options_js_file, callback)
     
-Will compile JavaScript, CSS or HTML files.
+Will compile JavaScript, CSS or HTML files. Where `filepath` is relative to the `projectRoot`.
 
 Examples:
 
-    compile('some.js', 'compress', 'vanilla-options.js')
-    compile('some.css', 'compress', 'vanilla-options.js')
-    compile('some.html', 'debug', 'vanilla-options.js')
+    compile('some.js', 'compress', { ... options ... }, callback)
+    compile('some.js', 'concat', { ... options ... }, callback)
+    compile('some.js', 'debug', { ... options ... }, callback)
+    
+    compile('some.css', 'compress', 'pathto.options.js', callback)
+    compile('*.css', 'concat', 'pathto.options.js', callback)
+    compile('*.css', 'debug', 'pathto.options.js', callback)
+    
+    compile('*.html', 'compress', { ... options ... }, callback)
+    compile('*.html', 'concat', { ... options ... }, callback)
+    compile('*.html', 'debug', { ... options ... }, callback)
 
 
 ** Modes **
@@ -289,6 +302,16 @@ When compiling JavaScript files in `debug` mode no concatenation or compilation 
 
 Where `filename` is normally the file that was written to the `webRoot` will be set to the empty string and instead the `markup` argument will have the HTML markup needed to include the source scripts into an HTML document. This same behaviour occurs when compiling CSS files in `debug` mode.
 
+Example:
+
+    require('vanilla').compile('js/main.js', 'debug', {
+      projectRoot: './src',
+      webRoot: './web'
+    }, function (error, filename, markup) {
+      // filename is the empty string
+      // markup is HTML markup to include the scripts/styleshets from the projectRoot
+    });
+
 * compress *
 
 Concatenates and minifies then writes to the `webRoot`. Keeps the same base path relative to the `projectRoo` when writing to `webRoot`.
@@ -298,6 +321,15 @@ When compiling JavaScript files in `compress` mode all import directives are cra
 The callback has the following signature: `function (error, filename)`
 
 Where `filename` is the file that was written to the `webRoot`. This same behaviour occurs when compiling CSS files in `compress` mode only their extension will be `.min.css`.
+
+Example:
+
+    require('vanilla').compile('js/main.js', 'compress', {
+      projectRoot: './src',
+      webRoot: './web'
+    }, function (error, filename) {
+      // filename is the written script/stylesheet to the webRoot
+    });
 
 * concat (default) *
 
@@ -309,13 +341,22 @@ The callback has the following signature: `function (error, filename)`
 
 Where `filename` is the file that was written to the `webRoot`. This same behaviour occurs when compiling CSS files in `compress` mode only their extension will be `.max.css`.
 
+Example:
+
+    require('vanilla').compile('js/main.js', 'concat', {
+      projectRoot: './src',
+      webRoot: './web'
+    }, function (error, filename) {
+      // filename is the written script/stylesheet to the webRoot
+    });
+
 
 ** Options **
 
     {
-      projectRoot 'relative/absolute path to project root 
+      projectRoot 'relative/absolute path to project root [default ./src]
           (relative to options JSON file or the current directory)'
-      webRoot: 'relative/absolute path to web root where all files will be written to
+      webRoot: 'relative/absolute path to web root where all files will be written to [default ./web]
           (relative to options JSON file or the current directory)',
       js: {
         minify: function (script, done) [optional -- default uses yui]

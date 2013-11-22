@@ -8,7 +8,7 @@ vows.describe('JavaScriptCompiler').addBatch({
   'A JavaScriptCompiler': {
     'when compiling a script with no imports in debug mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/js/d.js', 'debug', {
+        compiler.compile('./js/d.js', 'debug', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);
@@ -21,7 +21,7 @@ vows.describe('JavaScriptCompiler').addBatch({
     },
     'when compiling a script with no imports in concat mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/js/d.js', 'concat', {
+        compiler.compile('./js/d.js', 'concat', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);
@@ -35,7 +35,7 @@ vows.describe('JavaScriptCompiler').addBatch({
     },
     'when compiling a script with imports in debug mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/js/e.js', 'debug', {
+        compiler.compile('./js/e.js', 'debug', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);
@@ -54,7 +54,7 @@ vows.describe('JavaScriptCompiler').addBatch({
     },
     'when compiling a script with imports in concat mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/js/e.js', 'concat', {
+        compiler.compile('./js/e.js', 'concat', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);
@@ -68,7 +68,7 @@ vows.describe('JavaScriptCompiler').addBatch({
     },
     'when compiling a script with cyclic imports in debug mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/js/a.js', 'debug', {
+        compiler.compile('./js/a.js', 'debug', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);
@@ -90,7 +90,7 @@ vows.describe('JavaScriptCompiler').addBatch({
     },
     'when compiling a script with cyclic imports in concat mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/js/a.js', 'concat', {
+        compiler.compile('./js/a.js', 'concat', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);
@@ -104,7 +104,7 @@ vows.describe('JavaScriptCompiler').addBatch({
     },
     'when compiling a script with imports in compress mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/js/a.js', 'compress', {
+        compiler.compile('./js/a.js', 'compress', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);

@@ -8,7 +8,7 @@ vows.describe('HTMLCompiler').addBatch({
   'An HTMLCompiler': {
     'when compiling a template with no includes in debug mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/a.html', 'debug', {
+        compiler.compile('a.html', 'debug', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);
@@ -21,7 +21,7 @@ vows.describe('HTMLCompiler').addBatch({
     },
     'when compiling a template with includes in debug mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/b.html', 'debug', {
+        compiler.compile('b.html', 'debug', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);
@@ -35,7 +35,7 @@ vows.describe('HTMLCompiler').addBatch({
     },
     'when compiling a template with includes and scripts in debug mode': {
       topic: function () {
-        compiler.compile('./test/support/project/src/d.html', 'debug', {
+        compiler.compile('d.html', 'debug', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);
@@ -48,7 +48,7 @@ vows.describe('HTMLCompiler').addBatch({
     },
     'when compiling a template with an extends': {
       topic: function () {
-        compiler.compile('./test/support/project/src/e.html', 'debug', {
+        compiler.compile('e.html', 'debug', {
           projectRoot: './test/support/project/src',
           webRoot: './test/support/project/web'
         }, this.callback);
