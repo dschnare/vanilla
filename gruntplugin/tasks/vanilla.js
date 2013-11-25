@@ -14,8 +14,7 @@ var fs = require('fs');
 module.exports = function(grunt) {
   var parseHtmlFiles, parseHtmlFile, parseMeta, 
     parseIncludes, parseScriptsAndStylesheets,
-    crawlDependencies, concatScriptDependencies,
-    concatStylesheetDependencies, getResourceOutputPath,
+    crawlDependencies, concatDependencies, prefixPathExt,
     getBlocks, parseLayout, getBlockExtensions;
 
   grunt.registerMultiTask('vanilla', 'Simple HTML templating plugin that will also crawl JS and CSS dependencies.', function() {
@@ -222,24 +221,22 @@ module.exports = function(grunt) {
         // Interpret: /* @@import "file.css" */
         case 'stylesheet':
           deps = crawlDependencies(/\/\*\s*@@import ("|')([^\1]+?)\1\s*\*\//g, resource.filePath, resource.relFilePath, '.css');
-          content = content.substring(0, resource.begin) +  concatStylesheetDependencies(resource, deps, options) + content.substring(resource.end);
+          content = content.substring(0, resource.begin) +  concatDependencies(deps, options, '<link rel="stylesheet" href="{url}" />') + content.substring(resource.end);
           break;
         // Interpret: // #import "file.js"
         case 'script':
           deps = crawlDependencies(/\/\/\s*#import ("|')([^\1]+?)\1/g, resource.filePath, resource.relFilePath, '.js');
-          content = content.substring(0, resource.begin) +  concatScriptDependencies(resource, deps, options) + content.substring(resource.end);
+          content = content.substring(0, resource.begin) +  concatDependencies(deps, options, '<script type="text/javascript" src="{url}"></script>') + content.substring(resource.end);
           break;
       }
     });
     
     return {content:content};
   };
-  crawlDependencies = function (pattern, filePath, relFilePath, ext, deps, visited) {
-    var content, match, importedFilename, baseDir;
+  crawlDependencies = function (pattern, filePath, relFilePath, ext, visited) {
+    var deps, content, match, importedFilename, baseDir;
 
-    if (!Array.isArray(deps)) {
-      deps = [];
-    }
+    deps = [];
     
     if (!Array.isArray(visited)) {
       visited = [];
@@ -274,7 +271,7 @@ module.exports = function(grunt) {
 
     while (match = pattern.exec(content)) {
       importedFilename = path.resolve(baseDir, match[2]);
-      crawlDependencies(pattern, importedFilename, path.join(path.dirname(relFilePath), match[2]), ext, deps, visited);
+      deps = crawlDependencies(pattern, importedFilename, path.join(path.dirname(relFilePath), match[2]), ext, visited).concat(deps);
     }
 
     deps.push({
@@ -285,82 +282,47 @@ module.exports = function(grunt) {
 
     return deps;
   };
-  concatScriptDependencies = function (resource, deps, options) {
-    var outputPath, urls = [];
+  concatDependencies = function (deps, options, tpl) {
+    var outputPath, urls, rootDep;
 
-    outputPath = getResourceOutputPath(resource.filePath, options.jsMode, '.js', options.jsDest, resource.dest);
+    if (!deps.length) {
+      return '';
+    }
+
+    urls = [];
+    rootDep = deps[deps.length - 1];
 
     switch (options.jsMode) {
       case 'concat':
+        outputPath = prefixPathExt(path.join(options.jsDest, rootDep.relFilePath), '.max');
         grunt.file.write(outputPath, deps.map(function (dep) {
           return dep.content;
         }).join('\n\n'));
-        urls.push(path.relative(options.baseDest, outputPath).replace(/\\/g, '/'));
+        urls.push('/' + path.relative(options.baseDest, outputPath).replace(/\\/g, '/'));
         break;
       case 'compress':
+        outputPath = prefixPathExt(path.join(options.jsDest, rootDep.relFilePath), '.min');
         grunt.file.write(outputPath, options.jsMinify(deps.map(function (dep) {
           return dep.content;
         }).join('\n\n')));
-        urls.push(path.relative(options.baseDest, outputPath).replace(/\\/g, '/'));
+        urls.push('/' + path.relative(options.baseDest, outputPath).replace(/\\/g, '/'));
         break;
       default:
         deps.forEach(function (dep) {
           var copyPath = path.join(options.jsDest, dep.relFilePath);
           grunt.file.copy(dep.filePath, copyPath, {encoding:'utf8'});
-          urls.push(path.relative(options.baseDest, copyPath).replace(/\\/g, '/'));
+          urls.push('/' + path.relative(options.baseDest, copyPath).replace(/\\/g, '/'));
         });
     }
     
     return urls.map(function (url) {
-      return '<script type="text/javascript" src="/' + url + '"></script>';
+      return tpl.replace('{url}', url);
     }).join('\n');
   };
-  concatStylesheetDependencies = function (resource, deps, options) {
-    var outputPath, urls = [];
-
-    outputPath = getResourceOutputPath(resource.filePath, options.cssMode, '.css', options.cssDest, resource.dest);
-
-    switch (options.cssMode) {
-      case 'concat':
-        grunt.file.write(outputPath, deps.map(function (dep) {
-          return dep.content;
-        }).join('\n\n'));
-        urls.push(path.relative(options.baseDest, outputPath).replace(/\\/g, '/'));
-        break;
-      case 'compress':
-        grunt.file.write(outputPath, options.cssMinify(deps.map(function (dep) {
-          return dep.content;
-        }).join('\n\n')));
-        urls.push(path.relative(options.baseDest, outputPath).replace(/\\/g, '/'));
-        break;
-      default:
-        deps.forEach(function (dep) {
-          var copyPath = path.join(options.cssDest, dep.relFilePath);
-          grunt.file.copy(dep.filePath, copyPath, {encoding:'utf8'});
-          urls.push(path.relative(options.baseDest, copyPath).replace(/\\/g, '/'));
-        });
-    }
-    
-    return urls.map(function (url) {
-      return '<link rel="stylesheet" href="/' + url + '" />';
-    }).join('\n');
-  };
-  getResourceOutputPath = function (resourcePath, mode, ext, dest, destPostfix) {
-    var basename = path.basename(resourcePath, path.extname(resourcePath));
-    
-    if (basename === 'index') {
-      basename = path.basename(path.dirname(resourcePath)) + '-index';
-    }
-
-    if (mode === 'concat') {
-      basename += '.max' + ext;
-    } else if (mode === 'compress') {
-      basename += '.min' + ext;
-    } else {
-      basename += ext;
-    }
-    
-    return path.join(dest, destPostfix || '', basename);
+  prefixPathExt = function (thePath, extPrefix) {
+    var ext = path.extname(thePath);
+    extPrefix = extPrefix || '';
+    return path.join(path.dirname(thePath), path.basename(thePath, ext) + extPrefix + ext);
   };
 
   getBlocks = function (content) {

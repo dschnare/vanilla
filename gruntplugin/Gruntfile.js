@@ -76,6 +76,30 @@ module.exports = function(grunt) {
           src: 'index.html',
           dest: 'resources_debug'
         }]
+      },
+      resources_concat: {
+        options: {
+          mode: 'concat',
+          jsDest: 'resources_concat/js'
+        },
+        files: [{
+          expand: true,
+          cwd: 'test/fixtures/resources',
+          src: 'index.html',
+          dest: 'resources_concat'
+        }]
+      },
+      resources_compress: {
+        options: {
+          mode: 'compress',
+          jsDest: 'resources_compress/js'
+        },
+        files: [{
+          expand: true,
+          cwd: 'test/fixtures/resources',
+          src: 'index.html',
+          dest: 'resources_compress'
+        }]
       }
     },
 

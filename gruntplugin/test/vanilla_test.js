@@ -79,5 +79,31 @@ exports.vanilla = {
     test.equal(actual, expected, 'expect a/lib.js script to be copied.');
 
     test.done();
+  },
+  resources_concat: function(test) {
+    test.expect(2);
+
+    var actual = grunt.file.read('tmp/resources_concat/index.html');
+    var expected = grunt.file.read('test/expected/resources_concat/index.html');
+    test.equal(actual, expected, 'expect resource files to be parsed and inserted appropriately when debugging.');
+
+    actual = grunt.file.read('tmp/resources_concat/js/a/index.max.js');
+    expected = grunt.file.read('test/expected/resources_concat/js/a/index.max.js');
+    test.equal(actual, expected, 'expect a/index.js script to be maximized.');
+
+    test.done();
+  },
+  resources_compress: function(test) {
+    test.expect(2);
+
+    var actual = grunt.file.read('tmp/resources_compress/index.html');
+    var expected = grunt.file.read('test/expected/resources_compress/index.html');
+    test.equal(actual, expected, 'expect resource files to be parsed and inserted appropriately when debugging.');
+
+    actual = grunt.file.read('tmp/resources_compress/js/a/index.min.js');
+    expected = grunt.file.read('test/expected/resources_compress/js/a/index.min.js');
+    test.equal(actual, expected, 'expect a/index.js script to be minimized.');
+
+    test.done();
   }
 };
