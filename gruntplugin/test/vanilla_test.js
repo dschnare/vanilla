@@ -53,5 +53,31 @@ exports.vanilla = {
     test.equal(actual, expected, 'expect the blocks to be replaced appropriately throughout the layout hierarchy.');
 
     test.done();
+  },
+  includes: function(test) {
+    test.expect(1);
+
+    var actual = grunt.file.read('tmp/includes/index.html');
+    var expected = grunt.file.read('test/expected/includes/index.html');
+    test.equal(actual, expected, 'expect included files to be parsed and inserted appropriately.');
+
+    test.done();
+  },
+  resources_debug: function(test) {
+    test.expect(3);
+
+    var actual = grunt.file.read('tmp/resources_debug/index.html');
+    var expected = grunt.file.read('test/expected/resources_debug/index.html');
+    test.equal(actual, expected, 'expect resource files to be parsed and inserted appropriately when debugging.');
+
+    actual = grunt.file.read('tmp/resources_debug/js/a/index.js');
+    expected = grunt.file.read('test/expected/resources_debug/js/a/index.js');
+    test.equal(actual, expected, 'expect a/index.js script to be copied.');
+
+    actual = grunt.file.read('tmp/resources_debug/js/a/lib.js');
+    expected = grunt.file.read('test/expected/resources_debug/js/a/lib.js');
+    test.equal(actual, expected, 'expect a/lib.js script to be copied.');
+
+    test.done();
   }
 };

@@ -56,6 +56,26 @@ module.exports = function(grunt) {
           src: 'index.html',
           dest: 'nested_layout'
         }]
+      },
+      includes: {
+        files: [{
+          expand: true,
+          cwd: 'test/fixtures/includes',
+          src: 'index.html',
+          dest: 'includes'
+        }]
+      },
+      resources_debug: {
+        options: {
+          mode: 'debug',
+          jsDest: 'resources_debug/js'
+        },
+        files: [{
+          expand: true,
+          cwd: 'test/fixtures/resources',
+          src: 'index.html',
+          dest: 'resources_debug'
+        }]
       }
     },
 
