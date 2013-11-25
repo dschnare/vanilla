@@ -41,6 +41,8 @@
     "gruntplugin"
   ],
   "dependencies": {
-    "yuicompressor": "~2.4.8"
+    "yuicompressor": "~2.4.8",
+    "hogan.js": "~2.0.0",
+    "beefcake.js": "git://github.com/dschnare/beefcake.js.git"
   }
 }

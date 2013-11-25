@@ -10,12 +10,32 @@
 
 var path = require('path');
 var fs = require('fs');
+var Hogan = require('beefcake.js');
+
+/*
+ # JavaScript Directives
+
+ // #import 'file.js'
+
+
+ # Stylesheet Directives
+
+ /* @@import 'file.css' *_no_space_/
+
+ # HTML Directives
+
+ <v:include file="" />
+
+ <v:extends file="" />
+
+ 
+*/
 
 module.exports = function(grunt) {
   var parseHtmlFiles, parseHtmlFile, parseMeta, 
     parseIncludes, parseScriptsAndStylesheets,
     crawlDependencies, concatDependencies, prefixPathExt,
-    getBlocks, parseLayout, getBlockExtensions;
+    getBlocks, parseLayout, getBlockExtensions, mixin, parsePartials;
 
   grunt.registerMultiTask('vanilla', 'Simple HTML templating plugin that will also crawl JS and CSS dependencies.', function() {
     var options = this.options({
@@ -57,30 +77,58 @@ module.exports = function(grunt) {
       
       parseHtmlFiles(files.filter(function (filePath) {
         return path.extname(filePath) === '.html';
-      }), path.resolve(options.baseDest, f.dest), options);
+      }), options).pages.forEach(function (page) {
+        var dest = path.resolve(options.baseDest, f.dest);
+
+        // Destination is a file.
+        if (path.extname(dest)) {
+          grunt.file.write(dest, page.content);
+        // Destination is a directory.
+        } else {
+          grunt.file.write(path.join(dest, page.filePath), Hogan.render(page.content, page.context, page.partials || {}));
+        }
+      });
     });
   });
 
-  parseHtmlFiles = function (files, dest, options) {
-    files.forEach(function (filePath) {
-      var content = grunt.file.read(filePath, {encoding:'utf8'});
-      content = parseHtmlFile(content, filePath, null, options).content;
-      
-      // NOTE: When Hoganjs and Beefcake are added to the mix we'll want to parse
-      // all HTML files before we actually save them. This will give us a chance
-      // to enumerate all files and their meta then provide this data to Hoganjs+Beefcake.
-      
-      // Destination is a file.
-      if (path.extname(dest)) {
-        grunt.file.write(dest, content);
-      // Destination is a directory.
-      } else {
-        grunt.file.write(path.join(dest, filePath), content);
+  mixin = function (a) {
+    var k, args, b;
+
+    args = Array.prototype.slice.call(arguments, 1);
+    while (args.length) {
+      b = args.pop();
+      for (k in b) {
+        a[k] = b[k];
       }
-    });
+    }
+
+    return a;
   };
 
-  parseHtmlFile = function (content, filePath, blockExtensions, options) {
+  parseHtmlFiles = function (files, options) {
+    var pages = [];
+
+    files.forEach(function (filePath) {
+      var content, result, page;
+
+      content = grunt.file.read(filePath, {encoding:'utf8'});
+      result = parseHtmlFile(content, filePath, options);
+      content = result.content;
+      
+      pages.push({
+        filePath: filePath,
+        content: content,
+        context: mixin({
+          url: '/' + path.relative(options.baseDest, filePath).replace(/\\/g, '/')
+        }, result.meta || {}),
+        partials: result.partials
+      });
+    });
+
+    return {pages:pages};
+  };
+
+  parseHtmlFile = function (content, filePath, options, blockExtensions, partials) {
     var meta, result, blocks;
     
     result = parseMeta(content);
@@ -94,6 +142,10 @@ module.exports = function(grunt) {
     content = result.content;
     
     blocks = getBlocks(content);
+
+    result = parsePartials(content);
+    content = result.content;
+    partials = mixin(partials || {}, result.partials);
     
     if (Array.isArray(blockExtensions)) {
       blockExtensions.forEach(function (extension, i) {
@@ -127,10 +179,10 @@ module.exports = function(grunt) {
       content = content.substring(0, block.begin) + block.content + content.substring(block.end);
     });
     
-    result = parseLayout(content, filePath, blockExtensions, options);
+    result = parseLayout(content, filePath, options, blockExtensions, partials);
     content = result.content;
     
-    return {content:content};
+    return {content:content, meta:meta, partials:partials};
   };
 
   parseMeta = function (content) {
@@ -179,7 +231,7 @@ module.exports = function(grunt) {
     while (match = reg.exec(content)) {
       includedFilepath = path.resolve(dirname, match[2]);
       includes.push({
-        content: parseHtmlFile(grunt.file.read(includedFilepath), includedFilepath, null, options).content,
+        content: parseHtmlFile(grunt.file.read(includedFilepath), includedFilepath, options).content,
         begin: match.index,
         end: reg.lastIndex
       });
@@ -342,7 +394,26 @@ module.exports = function(grunt) {
     return blocks;
   };
 
-  parseLayout = function (content, filePath, blockExtensions, options) {
+  parsePartials = function (content) {
+    var partials, reg, match;
+    
+    partials = {};
+    
+    reg = /<v:partial name=("|')([^\1]+?)\1\s*(?:\/>|>([\s\S]*?)<\/v:partial>|>)/g;
+    while (match = reg.exec(content)) {
+      partials[match[2]] = {
+        begin: match.index,
+        end: reg.lastIndex,
+        content: (match[3] || '').trim()
+      };
+    }
+
+    content = content.replace(/<v:partial name=("|')[^\1]+?\1\s*(?:\/>|>[\s\S]*?<\/v:partial>|>)/g, '');
+    
+    return {content:content, partials:partials};
+  };
+
+  parseLayout = function (content, filePath, options, blockExtensions, partials) {
     // <v:extend file="" />
     var reg, match, k, extensions, layoutFilePath;
     
@@ -355,7 +426,7 @@ module.exports = function(grunt) {
     if (match = reg.exec(content)) {
       layoutFilePath = path.resolve(path.resolve(path.dirname(filePath)), match[2]);
       extensions = blockExtensions.concat(getBlockExtensions(content));
-      content = parseHtmlFile(grunt.file.read(layoutFilePath), layoutFilePath, extensions, options).content;
+      content = parseHtmlFile(grunt.file.read(layoutFilePath), layoutFilePath, options, extensions, partials).content;
     }
     
     return {content:content};
