@@ -1,6 +1,6 @@
 # vanilla
 
-> Simple HTML templating plugin that will also crawl JS and CSS dependencies.
+> Simple HTML templating plugin that crawls JS and CSS dependencies.
 
 ## Getting Started
 This plugin requires Grunt `~0.4.2`

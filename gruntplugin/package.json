@@ -1,6 +1,6 @@
 {
   "name": "vanilla",
-  "description": "Simple HTML templating plugin that will also crawl JS and CSS dependencies.",
+  "description": "Simple HTML templating plugin that crawls JS and CSS dependencies.",
   "version": "1.0.0",
   "homepage": "https://github.com/dschnare/vanilla",
   "author": {
