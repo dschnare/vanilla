@@ -100,6 +100,14 @@ module.exports = function(grunt) {
           src: 'index.html',
           dest: 'resources_compress'
         }]
+      },
+      meta: {
+        files: [{
+          expand: true,
+          cwd: 'test/fixtures/meta',
+          src: 'index.html',
+          dest: 'meta'
+        }]
       }
     },
 

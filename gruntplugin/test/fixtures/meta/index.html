@@ -1,0 +1,25 @@
+<v:layout src="./page.html" />
+<v:meta>
+{
+  title: 'Hello World'
+}
+</v:meta>
+<v:meta name="summary">
+  This is the <strong>summary</strong>.
+</v:meta>
+
+<v:replace name="body">
+  <p>This is the body!</p>
+</v:replace>
+
+<v:append name="body">
+  <p>This is more content added to the body.</p>
+</v:append>
+
+<v:block name="any">
+  this should be ignored.
+</v:block>
+
+<v:partial name="widget">
+  <div>WIDGET</div>
+</v:partial>
