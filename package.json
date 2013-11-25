@@ -23,7 +23,8 @@
     "url": "https://github.com/dschnare/vanilla/issues"
   },
   "devDependencies": {
-    "vows": "*"
+    "vows": "~0.7.0",
+    "grunt": "~0.4.2"
   },
   "dependencies": {
     "glob": "*",
