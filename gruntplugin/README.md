@@ -179,6 +179,8 @@ first in the HTML markup. Additionally, cycles are handled with no side effects.
 
 ### HTML Directives
 
+#### Meta Variables
+
     <v:meta></v:meta>
     <v:meta name="propertyname"></v:meta>
 
@@ -210,16 +212,15 @@ There are several built-in meta variables made available to each HTML template.
 
 Each page object has the following shape:
 
-{
-  filePath: 'absolute file path to the HTML page',
-  content: 'the HTML content of the page',
-  meta: {... the meta variables for the HTML page ...},
-  partials: {... the mustache partials exposed to the HTML page ...}
-}
+    {
+      filePath: 'absolute file path to the HTML page',
+      content: 'the HTML content of the page',
+      meta: {... the meta variables for the HTML page ...},
+      partials: {... the mustache partials exposed to the HTML page ...}
+    }
 
 
-* * *
-
+#### Mustache Partials
 
     <v:partial name=""></v:partial>
 
@@ -233,7 +234,7 @@ These directives offer a mechanism to provide custom mustache partials used duri
     {{/pages}}
     </ul>
 
-* * *
+#### Resource Inclusion
 
     <v:include file|src="" />
     <v:script file|src="" [dest=""] />
@@ -263,8 +264,7 @@ compiler compiles them with. Here's what to expect when compiling with each mode
 - concat = This will concatenate all dependent resource files into a single file then save it to the appropriate direcotry and inline the file using the appropriate embed element.
 - compress = This will concatenate all dependent resource files into a single file, minify then save it to the appropriate direcotry and inline the file using the appropriate embed element.
 
-
-* * *
+#### Layouts
     
     <v:block name="" />
     <v:block name=""></v:block>
@@ -273,9 +273,7 @@ Any HTML template can function as a layout by using `<v:block name=""></v:block>
 by either being replaced, prepended to or appended to. Think of blocks as the areas of a layout that can be modified by
 an extending HTML page.
 
-
-* * *
-
+#### Layout Extension
 
     <v:extends|layout file|src="" />
 
