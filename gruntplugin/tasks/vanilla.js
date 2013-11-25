@@ -62,8 +62,8 @@ module.exports = function(grunt) {
         var dest, content;
 
         dest = path.resolve(options.baseDest, f.dest);
-        page.context.url = '/' + path.relative(options.baseDest, dest).replace(/\\/g, '/');
-        content = Hogan.compile(page.content).render(page.context, page.partials || {});
+        page.meta.url = '/' + path.relative(options.baseDest, dest).replace(/\\/g, '/');
+        content = Hogan.compile(page.content).render(page.meta, page.partials || {});
 
         // Destination is a file.
         if (path.extname(dest)) {
@@ -94,18 +94,21 @@ module.exports = function(grunt) {
     var pages = [];
 
     files.forEach(function (filePath) {
-      var content, result, page;
+      var content, result, page, meta;
 
       content = grunt.file.read(filePath, {encoding:'utf8'});
       result = parseHtmlFile(content, filePath, options);
       content = result.content;
+      meta = mixin({}, result.meta || {}, { pages: pages });
+
+      Object.keys(meta).forEach(function (key) {
+        if (typeof meta[key] === 'function') meta[key] = meta[key].bind(meta);
+      });
       
       pages.push({
         filePath: filePath,
         content: content,
-        context: mixin({}, result.meta || {}, {
-          pages: pages
-        }),
+        meta: meta,
         partials: result.partials
       });
     });

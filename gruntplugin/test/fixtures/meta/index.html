@@ -1,7 +1,9 @@
 <v:layout src="./page.html" />
 <v:meta>
 {
-  title: 'Hello World'
+  title: function () {
+    return this.url.split('/').pop().split('.').shift().toUpperCase();
+  }
 }
 </v:meta>
 <v:meta name="summary">

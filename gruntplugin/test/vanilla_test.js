@@ -105,5 +105,14 @@ exports.vanilla = {
     test.equal(actual, expected, 'expect a/index.js script to be minimized.');
 
     test.done();
+  },
+  meta: function(test) {
+    test.expect(1);
+
+    var actual = grunt.file.read('tmp/meta/index.html');
+    var expected = grunt.file.read('test/expected/meta/index.html');
+    test.equal(actual, expected, 'expect meta data to be parsed and interpolated correctly.');
+
+    test.done();
   }
 };
