@@ -37,50 +37,163 @@ grunt.initConfig({
 
 ### Options
 
-#### options.separator
+#### options.baseDest
 Type: `String`
-Default value: `',  '`
+Default value: `'web'`
 
-A string value that is used to do something with whatever.
+A path to the base directory for all outputs. This directory is also used
+as the base for all URLs.
 
-#### options.punctuation
+#### options.mode
 Type: `String`
-Default value: `'.'`
+Default value: `'debug'`
 
-A string value that is used to do something else with whatever else.
+A string value indicating what mode to compile JavaScript and Stylesheet resources in.
+This value will override `jsMode` and `cssMode` if they don't have a value.
+
+Valid modes are:
+
+- debug
+- concat
+- compress
+
+#### options.jsMode
+Type: `String`
+Default value: `undefined`
+
+A string value indicating what mode to compile JavaScript resources in.
+
+Valid modes are:
+
+- debug
+- concat
+- compress
+
+#### options.jsDest
+Type: `String`
+Default value: `'js'`
+
+A path to the base directory to save all JavaScript resources.
+
+#### options.jsMinify
+Type: `Function`
+Default value: 
+
+    function (content, callback) {
+      require('yuicompressor').compress(content, {
+        charset: 'utf8',
+        type: 'js'
+      }, callback);
+    }
+
+A function to minify JavaScript resources. This function will only be called when
+JavaScript resources are compiled in `compress` mode.
+
+#### options.cssMode
+Type: `String`
+Default value: `undefined`
+
+A string value indicating what mode to compile Stylesheet resources in.
+
+Valid modes are:
+
+- debug
+- concat
+- compress
+
+#### options.cssDest
+Type: `String`
+Default value: `'css'`
+
+A path to the base directory to save all Stylesheet resources.
+
+#### options.cssMinify
+Type: `Function`
+Default value: 
+
+    function (content, callback) {
+      require('yuicompressor').compress(content, {
+        charset: 'utf8',
+        type: 'css'
+      }, callback);
+    }
+
+A function to minify Stylesheet resources. This function will only be called when
+Stylesheet resources are compiled in `compress` mode.
+
 
 ### Usage Examples
 
 #### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
+In this example, the default options are used to save all HTML pages in `web/pages`.
 
 ```js
 grunt.initConfig({
   vanilla: {
     options: {},
     files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
+      'pages': ['src/*.html']
+    }
+  }
 });
 ```
 
 #### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
+In this example, custom options are used to set the base output directory to `build` and all to save all JavaScript and Stylesheet resouces at the root of `build`.
 
 ```js
 grunt.initConfig({
   vanilla: {
     options: {
-      separator: ': ',
-      punctuation: ' !!!',
+      baseDest: 'build',
+      jsDest: './',
+      cssDest: './'
     },
     files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
+      'pages': ['src/*.html']
+    }
+  }
 });
 ```
+
+## Directives
+
+The Vanilla compiler adds several capabilities to HTML, JS and CSS files by introducing several directives to each file type.
+The compiler acts on the following directives and produces a result.
+
+### JavaScript Directives
+
+    // #import 'somefile.js'
+
+The `import` directive provides a means to explicitly designate another script as a dependency.
+When scripts are imported they are concatenated in such a way so that dependent scripts are referenced
+first in the HTML markup. Additionally, cycles are handled with no side effects.
+
+### Stylesheet Directives
+
+    /* @@import 'somefile.js' */
+
+The `import` directive provides a means to explicitly designate another stylesheet as a dependency.
+When stylesheets are imported they are concatenated in such a way so that dependent stylesheets are referenced
+first in the HTML markup. Additionally, cycles are handled with no side effects.
+
+### HTML Directives
+
+    <v:meta></v:meta>
+    <v:meta name="propertyname"></v:meta>
+
+    <v:include file|src="" />
+    <v:script file|src="" />
+    <v:stylesheet file|src="" />
+
+    <v:extends|layout file|src="" />
+    <v:block name=""></v:block>
+
+    <v:prepend name=""></v:prepend>
+    <v:replace name=""></v:replace>
+    <v:append name=""></v:append>
+
+    <v:partial name=""></v:partial>
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).

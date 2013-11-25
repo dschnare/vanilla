@@ -10,36 +10,7 @@
 
 var path = require('path');
 var fs = require('fs');
-var Hogan = require('hogan.js');
-
-/*
- # JavaScript Directives
-
- // #import 'file.js'
-
-
- # Stylesheet Directives
-
- /* @@import 'file.css' *_no_space_/
-
-
- # HTML Directives
- <v:meta></v:meta>
- <v:meta name="propertyname"></v:meta>
-
- <v:include file|src="" />
- <v:script file|src="" />
- <v:stylesheet file|src="" />
-
- <v:extends|layout file|src="" />
- <v:block name=""></v:block>
-
- <v:prepend name=""></v:prepend>
- <v:replace name=""></v:replace>
- <v:append name=""></v:append>
- 
- <v:partial name=""></v:partial>
-*/
+var Hogan = require('beefcake.js');
 
 module.exports = function(grunt) {
   var parseHtmlFiles, parseHtmlFile, parseMeta, 
