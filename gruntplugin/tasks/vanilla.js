@@ -242,7 +242,7 @@ module.exports = function(grunt) {
     resources = [];
     dirname = path.resolve(path.dirname(includedFilepath));
     
-    reg = /<v:(stylesheet|script) (?:file|src)=("|')([^\2]+?)\2\s*(dest=("|')([^\5]+?)\5)?\/?>/g;
+    reg = /<v:(stylesheet|script) (?:file|src)=("|')([^\2]+?)\2\s*\/?>/g;
     while (match = reg.exec(content)) {
       resources.push({
         type: match[1],

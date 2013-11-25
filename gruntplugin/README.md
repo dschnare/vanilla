@@ -252,6 +252,10 @@ Vanilla compiler, saved if not debugging and the appropriate embed element(s) wi
 Note that resources can be included by referencing a directory. If this is the case then the Vanilla compiler will attempt
 to reference an `index.js` or `index.css` file within the directory.
 
+    <v:script src="src/main" />
+
+In this example we are actually referencing the file `src/main/index.js` and we are writing it to `{baseDir}/{jsDir}/main/index.js` when in `debug` mode.
+
 The behaviour of the `<v:script src="" />` and `<v:stylesheet src="" />` changes depending on what `mode` the Vanilla
 compiler compiles them with. Here's what to expect when compiling with each mode:
 
@@ -259,11 +263,6 @@ compiler compiles them with. Here's what to expect when compiling with each mode
 - concat = This will concatenate all dependent resource files into a single file then save it to the appropriate direcotry and inline the file using the appropriate embed element.
 - compress = This will concatenate all dependent resource files into a single file, minify then save it to the appropriate direcotry and inline the file using the appropriate embed element.
 
-To specify a destination directory relative to the usual resource output directory then you can specify a `dest` attribute.
-
-    <v:script src="src/main" dest="somedir" />
-
-In this example we are actually referencing the file `src/main/index.js` and we are writing it to `{baseDir}/{jsDir}/somedir/main/index.js` when in `debug` mode.
 
 * * *
     
