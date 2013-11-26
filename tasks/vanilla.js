@@ -17,9 +17,12 @@ module.exports = function(grunt) {
     parseIncludes, parseScriptsAndStylesheets,
     crawlDependencies, concatDependencies, prefixPathExt,
     getBlocks, parseLayout, getBlockExtensions, mixin, parsePartials;
+  
 
   grunt.registerMultiTask('vanilla', 'Simple HTML templating plugin that will also crawl JS and CSS dependencies.', function() {
-    var options = this.options({
+    var options, cache;
+
+    options = this.options({
       baseDest: 'web',
       mode: 'debug',
       jsDest: 'js',
@@ -37,6 +40,22 @@ module.exports = function(grunt) {
         }, callback);
       }
     });
+
+    options.cache = {
+      hash: {},
+      exists: function (key) {
+        return !!this.hash[key];
+      },
+      get: function (key) {
+        return this.hash[key];
+      },
+      set: function (key, value) {
+        this.hash[key] = value;
+      },
+      clear: function () {
+        this.hash = {};
+      }
+    };
 
     options.baseDest = path.resolve(options.baseDest);
     options.jsDest = path.resolve(options.baseDest, options.jsDest || '');
@@ -97,7 +116,7 @@ module.exports = function(grunt) {
       var content, result, page, meta;
 
       content = grunt.file.read(filePath, {encoding:'utf8'});
-      result = parseHtmlFile(content, filePath, options);
+      result = parseHtmlFile(content, filePath, options, null, options.meta, options.partials);
       content = result.content;
       meta = mixin({}, result.meta || {}, { pages: pages });
 
@@ -210,7 +229,7 @@ module.exports = function(grunt) {
     // Recursively parse each included HTML file. Look for
     // directives of the form:
     // <v:include file="" />
-    var reg, match, dirname, includedFilepath, includes, result, includeMeta;
+    var reg, match, dirname, includedFilepath, includes, result, includeMeta, interpolatedContent;
     
     includes = [];
     dirname = path.resolve(path.dirname(includingFilepath));
@@ -222,21 +241,27 @@ module.exports = function(grunt) {
       if (match[3]) {
         includeMeta = (new Function('return ' + match[3].trim()).call());
       }
-      
-      if (path.extname(includedFilepath) === '.html') {
+
+      // Only read from cache if there were no meta variables specified
+      if (!match[3] && options.cache.exists(includedFilepath)) {
+        interpolatedContent = options.cache.get(includedFilepath);
+      } else if (path.extname(includedFilepath) === '.html') {
         result = parseHtmlFile(grunt.file.read(includedFilepath), includedFilepath, options, null, includeMeta);
-        includes.push({
-          content: Hogan.render(result.content, result.meta, result.partials),
-          begin: match.index,
-          end: reg.lastIndex
-        });
+        interpolatedContent = Hogan.render(result.content, result.meta, result.partials);
       } else {
-        includes.push({
-          content: Hogan.render(grunt.file.read(includedFilepath), includeMeta || {}),
-          begin: match.index,
-          end: reg.lastIndex
-        });
+        interpolatedContent = Hogan.render(grunt.file.read(includedFilepath), includeMeta || {});
       }
+
+      // Only cache the interpolated result if there was no meta variables specified.
+      if (!match[3]) {
+        options.cache.set(includedFilepath, interpolatedContent);
+      }
+
+      includes.push({
+        content: interpolatedContent,
+        begin: match.index,
+        end: reg.lastIndex
+      });
     }
     
     includes.reverse().forEach(function (incl) {
@@ -251,7 +276,7 @@ module.exports = function(grunt) {
     // directives of the form:
     // <v:script file="" />
     // <v:stylesheet file="" />
-    var reg, match, dirname, resources;
+    var reg, match, dirname, resources, concatenatedDeps;
     
     resources = [];
     dirname = path.resolve(path.dirname(includedFilepath));
@@ -274,13 +299,25 @@ module.exports = function(grunt) {
       switch (resource.type) {
         // Interpret: /* @@import "file.css" */
         case 'stylesheet':
-          deps = crawlDependencies(/\/\*\s*@@import ("|')([^\1]+?)\1\s*\*\//g, resource.filePath, resource.relFilePath, '.css');
-          content = content.substring(0, resource.begin) +  concatDependencies(deps, options, '<link rel="stylesheet" href="{url}" />') + content.substring(resource.end);
+          if (options.cache.exists(resource.filePath)) {
+            concatenatedDeps = options.cache.get(resource.filePath);
+          } else {
+            deps = crawlDependencies(/\/\*\s*@@import ("|')([^\1]+?)\1\s*\*\//g, resource.filePath, resource.relFilePath, '.css');
+            concatenatedDeps = concatDependencies(deps, options, '<link rel="stylesheet" href="{url}" />');
+            options.cache.set(resource.filePath, concatenatedDeps);
+          }
+          content = content.substring(0, resource.begin) + concatenatedDeps + content.substring(resource.end);
           break;
         // Interpret: // #import "file.js"
         case 'script':
-          deps = crawlDependencies(/\/\/\s*#import ("|')([^\1]+?)\1/g, resource.filePath, resource.relFilePath, '.js');
-          content = content.substring(0, resource.begin) +  concatDependencies(deps, options, '<script type="text/javascript" src="{url}"></script>') + content.substring(resource.end);
+          if (options.cache.exists(resource.filePath)) {
+            concatenatedDeps = options.cache.get(resource.filePath);
+          } else {
+            deps = crawlDependencies(/\/\/\s*#import ("|')([^\1]+?)\1/g, resource.filePath, resource.relFilePath, '.js');
+            concatenatedDeps = concatDependencies(deps, options, '<script type="text/javascript" src="{url}"></script>');
+            options.cache.set(resource.filePath, concatenatedDeps);
+          }
+          content = content.substring(0, resource.begin) + concatenatedDeps + content.substring(resource.end);
           break;
       }
     });
