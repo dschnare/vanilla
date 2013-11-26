@@ -418,12 +418,14 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 
-**v0.0.5** First relase, used custom file wrangling code.
+**v1.0.2** Add `meta` and `partials` options, add caching to included resources.
 
-**v0.1.2** Added several new directives and improved stablity.
-
-**v0.2.1** Standardized webPath option and added support for including module-like scripts from directories.
+**v1.0.1** Improved existing directives by adding ability to pass meta variables to included resources and to include non-HMTL resources via the `<v:include>` directive.
 
 **v1.0.0** First Grunt plugin release that supported all directives.
 
-**v1.0.1** Improved existing directives by adding ability to pass meta variables to included resources and to include non-HMTL resources via the `<v:include>` directive.
+**v0.2.1** Standardized webPath option and added support for including module-like scripts from directories.
+
+**v0.1.2** Added several new directives and improved stablity.
+
+**v0.0.5** First relase, used custom file wrangling code.
