@@ -1,7 +1,7 @@
 {
   "name": "vanilla",
   "description": "Simple HTML templating plugin that crawls JS and CSS dependencies.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/dschnare/vanilla",
   "author": {
     "name": "Darren Schnare",
