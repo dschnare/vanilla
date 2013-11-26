@@ -1,5 +1,0 @@
-var Module = (function () {
-  return {
-  
-  };
-}());

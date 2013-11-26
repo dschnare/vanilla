@@ -1,397 +1,353 @@
-vanilla
-==========
+# vanilla
 
-A simple HTML, JS and CSS templating library.
+> Simple HTML templating plugin that crawls JS and CSS dependencies.
 
-Install
-----------
+## Getting Started
+This plugin requires Grunt `~0.4.2`
 
-    npm install git://github.com/dschnare/vanilla.git
+If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
+
+```shell
+npm install vanilla --save-dev
+```
+
+Once the plugin has been installed, it may be enabled inside your Gruntfile with this line of JavaScript:
+
+```js
+grunt.loadNpmTasks('vanilla');
+```
+
+## The "vanilla" task
+
+### Overview
+In your project's Gruntfile, add a section named `vanilla` to the data object passed into `grunt.initConfig()`.
+
+```js
+grunt.initConfig({
+  vanilla: {
+    options: {
+      // Task-specific options go here.
+    },
+    your_target: {
+      // Target-specific file lists and/or options go here.
+    },
+  },
+});
+```
+
+### Options
+
+#### options.baseDest
+Type: `String`
+Default value: `'web'`
+
+A path to the base directory for all outputs. This directory is also used
+as the base for all URLs.
+
+#### options.mode
+Type: `String`
+Default value: `'debug'`
+
+A string value indicating what mode to compile JavaScript and Stylesheet resources in.
+This value will override `jsMode` and `cssMode` if they don't have a value.
+
+Valid modes are:
+
+- debug
+- concat
+- compress
+
+#### options.jsMode
+Type: `String`
+Default value: `undefined`
+
+A string value indicating what mode to compile JavaScript resources in.
+
+Valid modes are:
+
+- debug
+- concat
+- compress
+
+#### options.jsDest
+Type: `String`
+Default value: `'js'`
+
+A path to the base directory to save all JavaScript resources.
+
+#### options.jsMinify
+Type: `Function`
+Default value: 
+
+    function (content, callback) {
+      require('yuicompressor').compress(content, {
+        charset: 'utf8',
+        type: 'js'
+      }, callback);
+    }
+
+A function to minify JavaScript resources. This function will only be called when
+JavaScript resources are compiled in `compress` mode.
+
+#### options.cssMode
+Type: `String`
+Default value: `undefined`
+
+A string value indicating what mode to compile Stylesheet resources in.
+
+Valid modes are:
+
+- debug
+- concat
+- compress
+
+#### options.cssDest
+Type: `String`
+Default value: `'css'`
+
+A path to the base directory to save all Stylesheet resources.
+
+#### options.cssMinify
+Type: `Function`
+Default value: 
+
+    function (content, callback) {
+      require('yuicompressor').compress(content, {
+        charset: 'utf8',
+        type: 'css'
+      }, callback);
+    }
+
+A function to minify Stylesheet resources. This function will only be called when
+Stylesheet resources are compiled in `compress` mode.
 
 
-Usage
-----------
+### Usage Examples
 
-    require('vanilla').compile('*.html', {
-      projectRoot: './src',
-      webRoot: './web'
-    }, function (error) {
-      if (error) throw error;
-    });
+#### Default Options
+In this example, the default options are used to save all HTML pages in `web/pages`.
+
+```js
+grunt.initConfig({
+  vanilla: {
+    options: {},
+    files: {
+      'pages': ['src/*.html']
+    }
+  }
+});
+```
+
+#### Custom Options
+In this example, custom options are used to set the base output directory to `build` and all to save all JavaScript and Stylesheet resouces at the root of `build`.
+
+```js
+grunt.initConfig({
+  vanilla: {
+    options: {
+      baseDest: 'build',
+      jsDest: './',
+      cssDest: './'
+    },
+    files: {
+      'pages': ['src/*.html']
+    }
+  }
+});
+```
+
+## Directives
+
+The Vanilla compiler adds several capabilities to HTML, JS and CSS files by introducing several directives to each file type.
+The compiler acts on the following directives and produces a result.
+
+### JavaScript Directives
+
+    // #import 'somefile.js'
+
+The `import` directive provides a means to explicitly designate another script as a dependency.
+When scripts are imported they are concatenated in such a way so that dependent scripts are referenced
+first in the HTML markup. Additionally, cycles are handled with no side effects.
+
+### Stylesheet Directives
+
+    /* @@import 'somefile.js' */
+
+The `import` directive provides a means to explicitly designate another stylesheet as a dependency.
+When stylesheets are imported they are concatenated in such a way so that dependent stylesheets are referenced
+first in the HTML markup. Additionally, cycles are handled with no side effects.
+
+### HTML Directives
+
+#### Meta Variables
+
+    <v:meta></v:meta>
+    <v:meta name="propertyname"></v:meta>
+
+The meta directives provide a means for an HTML page to provide metadata and have it interpolated via [Hogan.js](http://twitter.github.io/hogan.js/)+[Beefcake.js](https://github.com/dschnare/beefcake.js) interpolation.
+The `<v:meta></v:meta>` directive accepts an Object literal that is interpreted as JavaScript. Because this block is interpreted as JavaScript you can add methods to the meta object like this:
+
+    <v:meta>
+    {
+      title: function () {
+        return this.url.split('/').pop().split('.').shift().toUpperCase();
+      }
+    }
+    </v:meta>
+
+The `<v:meta name=""></v:meta>` directives accept text (or HTML) that can span multiple lines, but whose value will be saved
+as the key of the same name as the `name` attribute on the `meta` object.
+
+    <v:meta name="summary">
+      This is a summary for the page or <strong>post</a>.
+    </v:meta>
+
+All meta variables will be mixed together from HTML template down to the template's layout and the layout's layout and so on. The mixing occurs by giving presedence to the higher-up meta variables (i.e. HTML template -> layout -> layout -> layout ...).
+Meta variables are made available during mustache interpolation before an HTML template is saved.
+
+There are several built-in meta variables made available to each HTML template. 
+
+- url = The absolute URL of the HTML template.
+- pages = An array of all page objects.
+
+Each page object has the following shape:
+
+    {
+      filePath: 'absolute file path to the HTML page',
+      content: 'the HTML content of the page',
+      meta: {... the meta variables for the HTML page ...},
+      partials: {... the mustache partials exposed to the HTML page ...}
+    }
+
+
+#### Mustache Partials
+
+    <v:partial name=""></v:partial>
+
+These directives offer a mechanism to provide custom mustache partials used during mustache interpolation.
+
+    <v:partial name="menuitem"><li><a href="{{meta.url}}">{{meta.title}}</a></li></v:partial>
+
+    <ul class="menu">
+    {{#pages}}
+      {{>menuitem}}
+    {{/pages}}
+    </ul>
+
+#### Resource Inclusion
+
+    <v:include file|src="" />
+    <v:script file|src="" [dest=""] />
+    <v:stylesheet file|src="" [dest=""] />
+
+These directives help you to include HTML, JS and CSS resources respectively into your HTML templates.
+
+The `<v:include file="" />` directive will inline an HTML file into an HTML template. This will recursively
+compile the included file without saving, but instead inline the markup in-place. If the path is relative it
+will be relative to the the including HTML template.
+
+The `<v:script src="" />` and `<v:stylesheet src="" />` directives will embed script and stylesheet resources using
+`<script>` and `<link>` elements. When a script or stylesheet is included in this way it will be compiled using the
+Vanilla compiler, saved if not debugging and the appropriate embed element(s) will be inlined in-place.
+
+Note that resources can be included by referencing a directory. If this is the case then the Vanilla compiler will attempt
+to reference an `index.js` or `index.css` file within the directory.
+
+    <v:script src="src/main" />
+
+In this example we are actually referencing the file `src/main/index.js` and we are writing it to `{baseDir}/{jsDir}/main/index.js` when in `debug` mode.
+
+The behaviour of the `<v:script src="" />` and `<v:stylesheet src="" />` changes depending on what `mode` the Vanilla
+compiler compiles them with. Here's what to expect when compiling with each mode:
+
+- debug (default) = This will copy all dependent resource files as-is to the appropriate directory and inline the files using the appropriate embed elements.
+- concat = This will concatenate all dependent resource files into a single file then save it to the appropriate direcotry and inline the file using the appropriate embed element.
+- compress = This will concatenate all dependent resource files into a single file, minify then save it to the appropriate direcotry and inline the file using the appropriate embed element.
+
+#### Layouts
     
+    <v:block name="" />
+    <v:block name=""></v:block>
 
-Learn
-----------
+Any HTML template can function as a layout by using `<v:block name=""></v:block>` directives. Each block can be extended
+by either being replaced, prepended to or appended to. Think of blocks as the areas of a layout that can be modified by
+an extending HTML page.
 
-The vanilla templating library provides a single `compile()` function that can be used to compile JavaScript, CSS and HTML files. When compiling each file type the library will parse directives of a particular format and act on them. The following describes all supported directives for each file type.
+#### Layout Extension
 
+    <v:extends|layout file|src="" />
 
+    <v:prepend name=""></v:prepend>
+    <v:replace name=""></v:replace>
+    <v:append name=""></v:append>
 
-**JavaScript**
-
-* * *
-
-    //#import "file[.js]"
-
-Imports a JavaScript file where the file path is relative to the file performing the import.
+Any HTML template can extend a layout, prepending, replacing or appending to the layout's defined blocks. If the path to the layout is
+relative it will be resolved relative to the extending HTML template. The blocks available for extension is determined by the lowest layout in the
+layout extension hierarchy.
 
 For example:
 
-a.js
-
-    //#import "./b.js"
-    var a = 'A';
-
-b.js
-
-    //#import "./c"
-    var B = 'B';
-  
-c/index.js
-
-    var c = 'C';
-  
-result
-
-    var c = 'C';
-    
-    //#import "./c"
-    var B = 'B';
-    
-    //#import "../b.js"
-    var a = 'A';
-
-
-*Cycles*
-
-Cyclic imports are detected and are prevented.
-
-
-*Debugging*
-
-During `debug` mode scripts cannot be wrapped, but instead are referenced in `<script>` elements
-where their `src` attribute points to the original source script.
-
-For example:
-
-a.js
-
-    //#import "./b.js"
-    var a = 'A';
-
-b.js
-
-    //#import "./c.js"
-    var B = 'B';
-  
-c.js
-
-    var c = 'C';
-  
-
-result
-
-    <script src="/srcdir/c.js" type="text/javascript"></script>
-    <script src="/srcdir/b.js" type="text/javascript"></script>
-    <script src="/srcdir/a.js" type="text/javascript"></script>
-
-
-
-**CSS**
-
-* * *
-
-    /* @@import "file[.js]" */
-
-Imports a CSS file where the file path is relative to the file performing the import.
-
-For example:
-
-a.css
-
-    /* @@import "./b.css" */
-    p { color: red; }
-
-b.css
-
-    /* @@import "./c.css" */
-    p { color: blue; }
-  
-c.css
-
-    p { color: green; }
-  
-result
-
-    p { color: green; }
-    
-    /* @@import "./c.css" */
-    p { color: blue; }
-    
-    /* @@import "./b.css" */
-    p { color: red; }
-
-
-*Cycles*
-
-Cyclic imports are detected and are prevented.
-
-
-*Debugging*
-
-Stylesheets are referenced in `<link>` elements where their `href` attribute points to the original source stylesheet.
-
-For example:
-
-a.css
-
-    /* @@import "./b.css" */
-    p { color: red; }
-
-b.css
-
-    /* @@import "./c.css" */
-    p { color: blue; }
-  
-c.css
-
-    p { color: green; }
-  
-result
-
-    <link rel="stylesheet" href="/srcdir/c.css" />
-    <link rel="stylesheet" href="/srcdir/b.css" />
-    <link rel="stylesheet" href="/srcdir/a.css" />
-
-
-
-**HTML**
-
-* * *
-
-    <v:data> ... JSON ... </v:data>
-
-Specifies a block of JSON data to use as the context when parsing the HTML template with [Hogan.js](http://twitter.github.io/hogan.js/)+[Beefcake.js](https://github.com/dschnare/beefcake.js).
-    
-    <v:script src="file.js" />
-    <v:stylesheet src="file.css" />
-
-Directive to include JavaScript and CSS directly into the HTML template. These directives will run the included script and stylesheets through the vanilla compiler and insert the appropriate HTML elements to include the compiled results.
-
-    <v:include file="" />
-    <v:include file=""> ... JSON (pased to included file) ... </v:include>
-
-Directive to include another HTML template into this one with or without a specific JSON data context for the included HTML template. 
-
-    <v:extends file="" />
-    <v:block name="" [operation=""]> ... HTML ... </v:block>
-
-Shorthand for `<v:block name="" operation=""> ... HTML ... </v:block>`:
-
-    <v:append name=""> ... HTML ... </v:append>
-    <v:prepend name=""> ... HTML ... </v:prepend>
-    <v:replace name=""> ... HTML ... </v:replace>
-
-These directives are used for specifying layouts and layout blocks. Layout blocks in a layout can be replaced, appended to or prepended to from an extending HTML template. In addition all blocks are exposed as partials to [Hogan.js](http://twitter.github.io/hogan.js/)+[Beefcake.js](https://github.com/dschnare/beefcake.js).
-
-Supported block operations are the following:
-
-- replace (default) - replace the layout block of the same name
-- prepend - prepend to the layout block of the same name
-- append - append to the layout block of the same name
-
-
-Examples:
-
-a.html
-
-    <v:data>{"title":"Hello"}</v:data>
-    <v:extends file="./layout.html" />
-    <v:block name="body">
-      <p>This is the body</p>
-    </v:block>
-    <v:block name="footer" operation="prepend">
-      <div class="copyright">This is the footer copyright</div>
-    </v:block>
-
-
-main.js
-
-    var Main = {};
-
-layout.html
+base.html
 
     <html>
       <head>
-        <title>{{title}} World!</title>
+        <v:block name="meta">
+          <title>Index</title>
+        </v:block>
       </head>
       <body>
-        <div class="wrapper">
-          <div class="body"><v:block name="body" /></div>
-          <footer>
-            <v:block name="footer">
-              <ul class="legal-links">
-                <li><a href="TBD">Terms</a></li>
-                <li><a href="TBD">Privacy</a></li>
-              </ul>
-            </v:block>
-          </footer>
-        </div>
-        <v:script src="./main.js" />
+        <v:block name="header" />
+        <v:block name="body" />
+        <v:block name="footer" />
+      </body>
+    </html>
+
+page.html
+
+    <v:extends file="./base.html" />
+
+    <v:append name="meta">
+      <meta charset="utf-8" />
+    </v:append>
+
+    <v:block name="ignored">
+      This will be ignored.
+    </v:block>
+
+
+index.html
+
+    <v:layout src="./page.html" />
+
+    <v:replace name="body">
+      <p>This is the body!</p>
+    </v:replace>
+
+    <v:append name="body">
+      <p>This is more content added to the body.</p>
+    </v:append>
+
+    <v:block name="any">
+      this should be ignored.
+    </v:block>
+
+
+result
+
+    <html>
+      <head>
+        <title>Index</title><meta charset="utf-8" />
+      </head>
+      <body>
+        
+        <p>This is the body!</p><p>This is more content added to the body.</p>
+        
       </body>
     </html>
 
 
-result (compiled in compress mode)
+## Contributing
+In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
-    <html>
-        <head>
-          <title>Hello World!</title>
-        </head>
-        <body>
-          <div class="wrapper">
-            <div class="body">
-              <p>This is the body</p>
-            </div>
-            <footer>
-                <div class="copyright">This is the footer copyright</div>
-                <ul class="legal-links">
-                  <li><a href="TBD">Terms</a></li>
-                  <li><a href="TBD">Privacy</a></li>
-                </ul>
-            </footer>
-          </div>
-          <script src="/js/main.min.js" type="text/javascript"></script>
-        </body>
-      </html>
-
-
-API
-----------
-
-    compile(filepath)
-    compile(filepath, mode)
-    compile(filepath, options)
-    compile(filepath, callback)
-    compile(filepath, mode, callback)
-    compile(filepath, options, callback)
-    compile(filepath, mode, options, callback)
-    
-Will compile JavaScript, CSS or HTML files. Where `filepath` is relative to the `projectRoot`.
-
-Examples:
-
-    compile('some.js', 'compress', { ... options ... }, callback)
-    compile('some.js', 'concat', { ... options ... }, callback)
-    compile('some.js', 'debug', { ... options ... }, callback)
-    
-    compile('some.css', 'compress', 'pathto.options.js', callback)
-    compile('*.css', 'concat', 'pathto.options.js', callback)
-    compile('*.css', 'debug', 'pathto.options.js', callback)
-    
-    compile('*.html', 'compress', { ... options ... }, callback)
-    compile('*.html', 'concat', { ... options ... }, callback)
-    compile('*.html', 'debug', { ... options ... }, callback)
-
-
-**Modes**
-
-The following modes are supported and have the following affect on JavaScript and CSS compilation:
-
-
-*debug*
-
-When compiling JavaScript files in `debug` mode no concatenation or compilation actually occurs. The callback has the following signature: `function (error, filename, markup)`
-
-Where `filename` is normally the file that was written to the `webRoot` will be set to the empty string and instead the `markup` argument will have the HTML markup needed to include the source scripts into an HTML document. This same behaviour occurs when compiling CSS files in `debug` mode.
-
-Example:
-
-    require('vanilla').compile('js/main.js', 'debug', {
-      projectRoot: './src',
-      webRoot: './web'
-    }, function (error, filename, markup) {
-      // filename is the empty string
-      // markup is HTML markup to include the scripts/styleshets from the projectRoot
-    });
-
-
-*compress*
-
-Concatenates and minifies then writes to the `webRoot`. Keeps the same base path relative to the `projectRoo` when writing to `webRoot`.
-
-When compiling JavaScript files in `compress` mode all import directives are crawled and the dependencies are concatenated then minified and finally saved to the `webRoot` with an extension `.min.js`. When saving the minified script the base path portion that is relative to the `projectRoot` is created in the `webRoot`.
-
-The callback has the following signature: `function (error, filename)`
-
-Where `filename` is the file that was written to the `webRoot`. This same behaviour occurs when compiling CSS files in `compress` mode only their extension will be `.min.css`.
-
-Example:
-
-    require('vanilla').compile('js/main.js', 'compress', {
-      projectRoot: './src',
-      webRoot: './web'
-    }, function (error, filename) {
-      // filename is the written script/stylesheet to the webRoot
-    });
-
-
-*concat (default)*
-
-Concatenates then writes to the `webRoot`. Keeps the same base path relative to the `projectRoot` when writing to `webRoot`.
-
-When compiling JavaScript files in `concat` mode all import directives are crawled and the dependencies are concatenated then saved to the `webRoot` with an extension `.max.js`. When saving the concatenated script the base path portion that is relative to the `projectRoot` is created in the `webRoot`.
-
-The callback has the following signature: `function (error, filename)`
-
-Where `filename` is the file that was written to the `webRoot`. This same behaviour occurs when compiling CSS files in `compress` mode only their extension will be `.max.css`.
-
-Example:
-
-    require('vanilla').compile('js/main.js', 'concat', {
-      projectRoot: './src',
-      webRoot: './web'
-    }, function (error, filename) {
-      // filename is the written script/stylesheet to the webRoot
-    });
-
-
-**Options**
-
-    {
-      projectRoot 'relative/absolute path to project root [default ./src]
-          (relative to options JSON file or the current directory)'
-      webRoot: 'relative/absolute path to web root where all files will be written to [default ./web]
-          (relative to options JSON file or the current directory)',
-      js: {
-        minify: function (script, done) [optional -- default uses yui]
-      },
-      css: {
-        minify: function (stylesheet, done) [optional -- default uses yui]
-      },
-      html: {
-        context: { object that servers as the mustache context (must be an Object) }, [optional]
-        partials: { object containing mustache partials }, [optional]
-        including: true/false - indicates that this HTML file is being included
-          so don't write to disk, [optional]
-        blocks: { hash of all blocks to have inserted into this HTML layout -- 
-          these are objects with a 'body' and an 'operation' property } [optional]
-          (i.e. { body: 'Hello', operation: 'append' })
-      }
-    }
-
-
-
-Roadmap
-----------
-
-1. (COMPLETE) Add CSS support.
-2. (COMPLETE) Add Hogan + Beefcake support to HTML templates.
-3. (COMPLETE) Look into adding glob support for the first argument to compile().
-4. (COMPLETE) Add ability to pass a JSON object to an HTML file that is being included with `<v:include>`.
-5. (COMPLETE) Add support for shorthand block replacement via the `<v:append name="">`, `<v:prepend name="">` and `<v:replace name="">` elements similar to Jade syntax.
-6. Better error reporting.
-7. Refactor each compiler so that only one tokenizer is created, also instead of modifying
-   the source text, produce a new text so that the token markers are still valid.
-8. Look at only reading a chunk from disk at a time into a buffer. This will
-   give the tool a more predictable memory footprint.
+## Release History
+_(Nothing yet)_

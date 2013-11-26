@@ -1,39 +1,48 @@
 {
   "name": "vanilla",
-  "version": "0.2.1",
-  "description": "A simple HTML, JS and CSS templating library.",
-  "main": "index.js",
-  "scripts": {
-    "test": "vows test/*-test.js"
+  "description": "Simple HTML templating plugin that crawls JS and CSS dependencies.",
+  "version": "1.0.0",
+  "homepage": "https://github.com/dschnare/vanilla",
+  "author": {
+    "name": "Darren Schnare",
+    "email": "schnare.d@gmail.com",
+    "url": "http://darrenschnare.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dschnare/vanilla"
+    "url": "git://github.com/dschnare/vanilla.git"
   },
-  "keywords": [
-    "templating",
-    "html",
-    "js",
-    "css",
-    "simple"
-  ],
-  "author": "Darren Schnare <schnare.d@gmail.com>",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/dschnare/vanilla/issues"
   },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/dschnare/vanilla/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "Gruntfile.js",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
   "devDependencies": {
-    "vows": "~0.7.0",
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-contrib-clean": "~0.4.0",
+    "grunt-contrib-nodeunit": "~0.2.0",
     "grunt": "~0.4.2"
   },
-  "dependencies": {
-    "glob": "*",
-    "wrench": "*",
-    "yuicompressor": "*",
-    "hogan.js": "git://github.com/twitter/hogan.js.git",
-    "beefcake.js": "git://github.com/dschnare/beefcake.js.git"
+  "peerDependencies": {
+    "grunt": "~0.4.2"
   },
-  "engines": {
-    "node": ">=0.10.20"
+  "keywords": [
+    "gruntplugin"
+  ],
+  "dependencies": {
+    "yuicompressor": "~2.4.8",
+    "hogan.js": "~2.0.0",
+    "beefcake.js": "git://github.com/dschnare/beefcake.js.git"
   }
 }
