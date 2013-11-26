@@ -57,6 +57,18 @@ Valid modes are:
 - concat
 - compress
 
+#### options.meta
+Type: `Object`
+Default value: `undefined`
+
+An object containing meta variables to pass to all HTML templates being compiled.
+
+#### options.partials
+Type: `Object`
+Default value: `undefined`
+
+An object containing mustache partials to pass to all HTML templates being compiled.
+
 #### options.jsMode
 Type: `String`
 Default value: `undefined`
