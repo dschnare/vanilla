@@ -301,6 +301,8 @@ Any HTML template can function as a layout by using `<v:block name=""></v:block>
 by either being replaced, prepended to or appended to. Think of blocks as the areas of a layout that can be modified by
 an extending HTML page.
 
+**NOTE:** Blocks cannot be nested.
+
 #### Layout Extension
 
     <v:extends|layout file|src="" />
@@ -378,12 +380,12 @@ result
 
 For JavaScript and Stylesheet file types that only have one directive the order directives are processed is of no issue. However the order directives are processed in HTML templates will determine how you use each directive. Here's the order things occur:
 
-# Meta directives are parsed and removed
-# Resource inclusion directives (include, stylesheet, script) are parsed and inlined
-# Blocks are enumerated then extended (via append, prepend, replace) if the HTML template is being used as a layout, otherwise they are inlined as-is
-# Partials are parsed and removed
-# Block extensions are enumerated (append, prepend, replace) only if the HTML template has an `<v:extends>` directive
-# Mustache interpolation
+1. Meta directives are parsed and removed
+2. Resource inclusion directives (include, stylesheet, script) are parsed and inlined
+3. Blocks are enumerated then extended (via append, prepend, replace) if the HTML template is being used as a layout, otherwise they are inlined as-is
+4. Partials are parsed and removed
+5. Block extensions are enumerated (append, prepend, replace) only if the HTML template has an `<v:extends>` directive
+6. Mustache interpolation
 
 The intension with this ordering is that blocks can be augmented by resource inclusion, and partials can be augmented by blocks and resource inclusion. As such, `<v:meta>`, `<v:extends|layout>`, `<v:append|prepend|replace>` and `<v:partial>` directives are meant to occur at the root level of an HTML template. All other directives can occur anywhere. And since all HTML templates are treated as just text files, proper XML/HTML format is not required to be followed. You can do something like this perfectly fine:
 
