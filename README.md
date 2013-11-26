@@ -398,7 +398,7 @@ The intension with this ordering is that blocks can be augmented by resource inc
     </body>
     </html>
 
-The fact that directives resemble HTML elements is irrelevant. Namespaced HTML elements was chosen so that editors could provide syntax highlighting without having to create a custom syntax file. And since most of the time these directives will be used under appropriate HTML rules it was deemed it a good fit.
+The fact that directives resemble HTML elements is irrelevant. Namespaced HTML elements was chosen so that editors could provide syntax highlighting without having to create a custom syntax file. And since most of the time these directives will be used under appropriate HTML rules it was deemed a good fit.
 
 
 ## Contributing
