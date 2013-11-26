@@ -210,6 +210,8 @@ There are several built-in meta variables made available to each HTML template.
 - url = The absolute URL of the HTML template.
 - pages = An array of all page objects.
 
+**NOTE:** These variables are undefined for HTML templates included via `<v:include>`.
+
 Each page object has the following shape:
 
     {
@@ -240,11 +242,37 @@ These directives offer a mechanism to provide custom mustache partials used duri
     <v:script file|src="" [dest=""] />
     <v:stylesheet file|src="" [dest=""] />
 
-These directives help you to include HTML, JS and CSS resources respectively into your HTML templates.
+These directives help you to include HTML, JS and CSS resources into your HTML templates.
 
 The `<v:include file="" />` directive will inline an HTML file into an HTML template. This will recursively
 compile the included file without saving, but instead inline the markup in-place. If the path is relative it
-will be relative to the the including HTML template.
+will be relative to the the including HTML template. If the file included is not an HTML file then it will be read
+as a text file and inlined in-place.
+
+In addition to inlining text content and/or parsing included HTML templates, any included file can be passed meta variables that will be used when the file is interpolated using mustache.
+
+For example:
+
+    <div class="footer">
+      <v:include file="footer">
+      {
+        year: 2013,
+        links: [
+          {label: 'Terms', url: '/terms'},
+          {label: 'Privacy', url: '/privacy'}
+        ]
+      }
+      </v:include>
+    </div>
+    
+Then in the included file:
+
+    <p>Copyright {{year}}</p>
+    <ul class="footer-links">
+    {{#links}}
+      <li><a href="{{url}}">{{label}}</a></li>
+    {{/links}}
+    </ul>
 
 The `<v:script src="" />` and `<v:stylesheet src="" />` directives will embed script and stylesheet resources using
 `<script>` and `<link>` elements. When a script or stylesheet is included in this way it will be compiled using the
@@ -344,6 +372,31 @@ result
         
       </body>
     </html>
+
+
+## Directive Processing Order
+
+For JavaScript and Stylesheet file types that only have one directive the order directives are processed is of no issue. However the order directives are processed in HTML templates will determine how you use each directive. Here's the order things occur:
+
+# Meta directives are parsed and removed
+# Resource inclusion directives (include, stylesheet, script) are parsed and inlined
+# Blocks are enumerated then extended (via append, prepend, replace) if the HTML template is being used as a layout, otherwise they are inlined as-is
+# Partials are parsed and removed
+# Block extensions are enumerated (append, prepend, replace) only if the HTML template has an `<v:extends>` directive
+# Mustache interpolation
+
+The intension with this ordering is that blocks can be augmented by resource inclusion, and partials can be augmented by blocks and resource inclusion. As such, `<v:meta>`, `<v:extends|layout>`, `<v:append|prepend|replace>` and `<v:partial>` directives are meant to occur at the root level of an HTML template. All other directives can occur anywhere. And since all HTML templates are treated as just text files, proper XML/HTML format is not required to be followed. You can do something like this perfectly fine:
+
+    <html>
+    <head>
+      <title><v:block name="title"> - My Site</v:block></title>
+    </head>
+    <body class="<v:block name="bodyclass">page</v:block>">
+      The body
+    </body>
+    </html>
+
+The fact that directives resemble HTML elements is irrelevant. Namespaced HTML elements was chosen so that editors could provide syntax highlighting without having to create a custom syntax file. And since most of the time these directives will be used under appropriate HTML rules it was deemed it a good fit.
 
 
 ## Contributing

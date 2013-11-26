@@ -18,6 +18,10 @@
   <p>This is more content added to the body.</p>
 </v:append>
 
+<v:replace name="footer">
+  <v:include file="./footer.tpl">{ year: 2013 }</v:include>
+</v:replace>
+
 <v:block name="any">
   this should be ignored.
 </v:block>

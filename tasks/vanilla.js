@@ -130,10 +130,6 @@ module.exports = function(grunt) {
     content = result.content;
     
     blocks = getBlocks(content);
-
-    result = parsePartials(content);
-    content = result.content;
-    partials = mixin(result.partials, partials || {});
     
     if (Array.isArray(blockExtensions)) {
       blockExtensions.forEach(function (extension, i) {
@@ -166,6 +162,10 @@ module.exports = function(grunt) {
       var block = blocks[blockName];
       content = content.substring(0, block.begin) + block.content + content.substring(block.end);
     });
+    
+    result = parsePartials(content);
+    content = result.content;
+    partials = mixin(result.partials, partials || {});
     
     result = parseLayout(content, filePath, options, blockExtensions, meta, partials);
     content = result.content;
@@ -210,19 +210,33 @@ module.exports = function(grunt) {
     // Recursively parse each included HTML file. Look for
     // directives of the form:
     // <v:include file="" />
-    var reg, match, dirname, includedFilepath, includes;
+    var reg, match, dirname, includedFilepath, includes, result, includeMeta;
     
     includes = [];
     dirname = path.resolve(path.dirname(includingFilepath));
     
-    reg = /<v:include (?:file|src)=("|')([^\1]+?)\1\s*\/?>/g;
+    reg = /<v:include (?:file|src)=("|')([^\1]+?)\1\s*(?:\/>|>([^<]*?)<\/v:include>|>)/g;
     while (match = reg.exec(content)) {
       includedFilepath = path.resolve(dirname, match[2]);
-      includes.push({
-        content: parseHtmlFile(grunt.file.read(includedFilepath), includedFilepath, options).content,
-        begin: match.index,
-        end: reg.lastIndex
-      });
+      
+      if (match[3]) {
+        includeMeta = (new Function('return ' + match[3].trim()).call());
+      }
+      
+      if (path.extname(includedFilepath) === '.html') {
+        result = parseHtmlFile(grunt.file.read(includedFilepath), includedFilepath, options, null, includeMeta);
+        includes.push({
+          content: Hogan.render(result.content, result.meta, result.partials),
+          begin: match.index,
+          end: reg.lastIndex
+        });
+      } else {
+        includes.push({
+          content: Hogan.render(grunt.file.read(includedFilepath), includeMeta || {}),
+          begin: match.index,
+          end: reg.lastIndex
+        });
+      }
     }
     
     includes.reverse().forEach(function (incl) {
