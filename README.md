@@ -405,4 +405,8 @@ The fact that directives resemble HTML elements is irrelevant. Namespaced HTML e
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-_(Nothing yet)_
+**v0.0.5** First relase, used custom file wrangling code.
+**v0.1.2** Added several new directives and improved stablity.
+**v0.2.1** Standardized webPath option and added support for including module-like scripts from directories.
+**v1.0.0** First Grunt plugin release that supported all directives.
+**v1.0.1** Improved existing directives by adding ability to pass meta variables to included resources and to include non-HMTL resources via the `<v:include>` directive.
