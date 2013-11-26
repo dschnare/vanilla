@@ -39,8 +39,8 @@ module.exports = function(grunt) {
     });
 
     options.baseDest = path.resolve(options.baseDest);
-    options.jsDest = path.resolve(options.baseDest, options.jsDest);
-    options.cssDset = path.resolve(options.baseDest, options.cssDset);
+    options.jsDest = path.resolve(options.baseDest, options.jsDest || '');
+    options.cssDset = path.resolve(options.baseDest, options.cssDset || '');
     options.jsMode = options.jsMode || options.mode;
     options.cssMode = options.cssMode || options.mode;
 
