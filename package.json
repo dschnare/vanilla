@@ -44,6 +44,7 @@
     "yuicompressor": "~2.4.8",
     "hogan.js": "~2.0.0",
     "beefcake.js": "git://github.com/dschnare/beefcake.js.git",
-    "underscore": "~1.5.2"
+    "underscore": "~1.5.2",
+    "glob": "~3.2.7"
   }
 }

@@ -12,18 +12,21 @@ var path = require('path');
 var fs = require('fs');
 var Hogan = require('beefcake.js');
 var _ = require('underscore');
-var orderReg = /(after|before|replace):(\w+)/;
+var orderReg = /(after|before|replace)\s*:\s*(\w+)/;
+var util = require('../lib/util');
 
 module.exports = function(grunt) {
-  var processAndWriteFiles, processAndWriteFile, processFile, vanilla, deepClone;
+  var processAndWriteFiles, processAndWriteFile, processFile, vanilla;
   
   grunt.registerMultiTask('vanilla', 'Simple text file templating plugin.', function() {
-    var options, processors;
+    var options, processors, done;
+    
+    done = this.async();
 
     options = this.options({
       baseDest: 'web',
       processors: [],
-      extensions: require('../extensions'),
+      extensions: require('../lib/extensions'),
       defaults: {
         mode: 'debug',
         mustacheDeliiter: '{{ }}',
@@ -58,7 +61,7 @@ module.exports = function(grunt) {
       extensions[key] = _.extend({}, options.defaults, opts);
     });
     
-    processors = require('../processors');
+    processors = require('../lib/processors');
     options.processors.forEach(function (processor) {
       var match, insertionPoint;
       
@@ -90,8 +93,8 @@ module.exports = function(grunt) {
     });
     
     // Iterate over all specified file groups.
-    this.files.forEach(function(f) {
-      var files = f.src.filter(function(filePath) {
+    util.forEachAsync(this.files, function (fileObject, i, origFiles, callback) {
+      var files = fileObject.src.filter(function(filePath) {
         // Warn on and remove invalid source files (if nonull was set).
         if (!grunt.file.exists(filePath)) {
           grunt.log.warn('Source file "' + filePath + '" not found.');
@@ -101,94 +104,135 @@ module.exports = function(grunt) {
         }
       });
       
-      processAndWriteFiles(files, path.resolve(options.baseDest, f.dest), options);
+      processAndWriteFiles(files, path.resolve(options.baseDest, fileObject.dest), options, callback);
+    }, function (error) {
+      done(!!error);
     });
   });
 
-  processAndWriteFiles = function (files, dest, options) {
-    files.forEach(function (filePath) {
-      var opts = options[path.extname(filePath).substr(1)] || options.defaults;
-      processAndWriteFile(filePath, opts, dest);
+  processAndWriteFiles = function (files, dest, options, callback) {
+    files = files.slice();
+    
+    util.forEachAsync(files, function (filePath, callback) {
+      var opts, absFilePath;
+      
+      opts = options[path.extname(filePath).substr(1)] || options.defaults;
+      opts = Object.create(opts);
+      absFilePath = path.resolve(filePath);
+      
+      // Destination is a file
+      if (path.extname(dest)) {
+        opts.dest = dest;
+      // Destination is a directory
+      } else {
+        if (absFilePath === filePath) {
+          opts.dest = path.join(dest, path.basename(filePath));
+        } else {
+          // Preserve the relative filePath when writing.
+          opts.dest = path.join(dest, filePath);
+        }
+      }
+      
+      processAndWriteFile(absFilePath, opts, callback);
+    }, callback);
+  };
+  
+  processAndWriteFile = function (filePath, fileOptions, callback) {
+    // TODO: this function should set the destination.
+    
+    processFile(filePath, fileOptions, function (error, result) {
+      var dest = fileOptions.dest;
+      
+      if (error) {
+        callback(error);
+      } else {
+        // Only do a write if the filePath hasn't been written before.
+        if (!result.dest) {
+          dest = util.replaceExtname(dest, result.extname);
+          result.dest = dest;
+          fileOptions.cache.set(filePath, result);
+          grunt.file.write(dest, content);
+        }
+
+        callback(null, {content:result.content, filePath:dest});
+      }
     });
   };
   
-  processAndWriteFile = function (filePath, fileOptions, dest) {
-    var content = processFile(filePath, fileOptions);
+  processFile = function (filePath, fileOptions, callback) {
+    var v, delim, operations;
     
-    dest = dest || fileOptions.dest;
+    // TODO: Create context and use that to pass to all processors.
     
-    // If filePath is absolute then we just take it's name when writing.
-    if (path.resolve(filePath) === filePath) {
-      filePath = path.basename(filePath);
-    }
-      
-    // Destination is a file.
-    if (path.extname(dest)) {
-      grunt.file.write(dest, content);
-    // Destination is a directory.
-    } else {
-      grunt.file.write(path.join(dest, filePath), content);
+    if (fileOptions.cache.exists(filePath)) {
+      callback(null, fileOptions.cache.get(filePath));
+      return;
     }
     
-    return {content:content, filePath:path.join(dest, filePath)};
-  };
-  
-  processFile = function (filePath, fileOptions) {
-    var content, v;
-    
-    if (fileOptions.cache && fileOptions.cache.exists(filePath)) {
-      return fileOptions.cache.get(filePath);
-    }
-    
-    fileOptions = deepClone(fileOptions);
-    content = grunt.file.read(filePath, {encoding:'utf8'});
-    
+    fileOptions = util.deepClone(fileOptions);
     v = Object.create(vanilla);
     v.resolvePath = function (aFilePath) {
       return path.resolve(path.dirname(filePath), aFilePath);
     };
     
-    _.each(processors, function (processor, directiveName) {
-      content = processor.process(content, fileOptions, v, _);
+    // context = _.extend({}, fileOptions, {
+    //   filePath: filePath,
+    //   content: grunt.file.read(filePath, {encoding:'utf8'}),
+    //   dest: ''
+    // });
+    
+    // Processing
+    operations = processors.map(function (p) {
+      return function (content, callback) {
+        p.process(content, fileOptions, v, _, callback);
+      }
+    };
+    operations.push.apply(operations, [
+      // Interpolation
+      function (content, callback) {
+        var delim = '';
+        
+        if (fileOptions.mustacheDeliiter && fileOptions.mustacheDeliiter !== '{{ }}') {
+          delim = '{{=' + fileOptions.mustacheDeliiter + '=}}';
+        }
+        
+        content = Hogan.compile(delim + content).render(fileOptions.meta || {}, fileOptions.partials || {});
+        callback(null, content);
+      },
+      // Transpilation
+      function (content, callback) {
+        if (typeof fileOptions.transpile === 'function') {
+          fileOptions.transpile(content, callback);
+        } else {
+          callback(null, {content:content, extname:path.extname(filePath)});
+        }
+      },
+      // Minification
+      function (result, callback) {
+        if (fileOptions.mode === 'compress' && typeof fileOptions.minify === 'function') {
+          fileOptions.minify(result.content, function (error, content) {
+            if (error) {
+              callback(error);
+            } else {
+              result.content = content;
+              callback(null, result);
+            }
+          });
+        } else {
+          callback(null, result);
+        }
+      }
+    ]);
+    
+    // Run all operations asynchronously
+    util.waterfallAsync(operations, grunt.file.read(filePath, {encoding:'utf8'}), function (error, result) {
+      if (error) {
+        callback(error);
+      } else {
+        fileOptions.cache.set(filePath, result);
+        callback(null, result);
+      }
     });
-    
-    content = Hogan.compile(content).render(fileOptions.meta || {}, fileOptions.partials || {});
-    
-    // TODO: Run transpilation
-    
-    // TODO: Run minification
-    // if (fileOptions.mode === 'compress' && typeof fileOptions.minify === 'function') {
-    //   fileOptions.minify(content, function (error, result) {
-    //     if (error) {
-          
-    //     } else {
-          
-    //     }
-    //   });
-    // }
-    
-    fileOptions.cache.set(filePath, content);
-    
-    return content;
-  };
-  
-  deepClone = function (o) {
-    var obj, result;
-    
-    if (Array.isArray(o)) {
-      result = _.map(o, function (v) {
-        return deepClone(v);
-      });
-    } else if (Object(o) === o) {
-      result = {};
-      _.each(o, function (v, k) {
-        result[k] = deepClone(v);
-      });
-    } else {
-      result = o;
-    }
-    
-    return result;
   };
   
   
@@ -234,15 +278,33 @@ module.exports = function(grunt) {
       
       return result;
     },
-    processAndWriteFile: function (filePath) {
-      var fileOptions = options[path.extname(filePath).substr(1)] || options.defaults;
-      return processAndWriteFile(filePath, fileOptions);
-    },
-    processFile: function (filePath, opts) {
-      var fileOptions = options[path.extname(filePath).substr(1)] || options.defaults;
+    processAndWriteFile: function (filePath, opts, callback) {
+      var fileOptions, dest;
+      
+      if (typeof opts === 'function') {
+        callback = opts;
+        opts = {};
+      }
+      
+      fileOptions = options[path.extname(filePath).substr(1)] || options.defaults;
+      dest = path.join(fileOptions.dest, 'reference-' + Date.now() + '--' + path.basename(filePath));
       _.extend(fileOptions, opts);
-      return processFile(filePath, fileOptions);
+      
+      return processAndWriteFile(filePath, fileOptions, dest, callback);
     },
-    deepClone: deepClone
+    processFile: function (filePath, opts, callback) {
+      var fileOptions;
+      
+      if (typeof opts === 'function') {
+        callback = opts;
+        opts = {};
+      }
+      
+      fileOptions = options[path.extname(filePath).substr(1)] || options.defaults;
+      _.extend(fileOptions, opts);
+      
+      return processFile(filePath, fileOptions, callback);
+    },
+    deepClone: util.deepClone
   };
 };
