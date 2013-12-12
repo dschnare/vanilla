@@ -5,6 +5,8 @@
  * Copyright (c) 2013 Darren Schnare
  * Licensed under the MIT license.
  */
+ 
+ var vanilla = require('./index');
 
 'use strict';
 
@@ -28,89 +30,6 @@ module.exports = function(grunt) {
       tests: ['tmp'],
     },
 
-    // Configuration to be run (and then tested).
-    vanilla: {
-      options: {
-        baseDest: 'tmp'
-      },
-      default_layout: {
-        files: [{
-          expand: true,
-          cwd: 'test/fixtures/default_layout',
-          src: 'index.html',
-          dest: 'default_layout'
-        }]
-      },
-      extension_layout: {
-        files: [{
-          expand: true,
-          cwd: 'test/fixtures/extension_layout',
-          src: 'index.html',
-          dest: 'extension_layout'
-        }]
-      },
-      nested_layout: {
-        files: [{
-          expand: true,
-          cwd: 'test/fixtures/nested_layout',
-          src: 'index.html',
-          dest: 'nested_layout'
-        }]
-      },
-      includes: {
-        files: [{
-          expand: true,
-          cwd: 'test/fixtures/includes',
-          src: 'index.html',
-          dest: 'includes'
-        }]
-      },
-      resources_debug: {
-        options: {
-          mode: 'debug',
-          jsDest: 'resources_debug/js'
-        },
-        files: [{
-          expand: true,
-          cwd: 'test/fixtures/resources',
-          src: 'index.html',
-          dest: 'resources_debug'
-        }]
-      },
-      resources_concat: {
-        options: {
-          mode: 'concat',
-          jsDest: 'resources_concat/js'
-        },
-        files: [{
-          expand: true,
-          cwd: 'test/fixtures/resources',
-          src: 'index.html',
-          dest: 'resources_concat'
-        }]
-      },
-      resources_compress: {
-        options: {
-          mode: 'compress',
-          jsDest: 'resources_compress/js'
-        },
-        files: [{
-          expand: true,
-          cwd: 'test/fixtures/resources',
-          src: 'index.html',
-          dest: 'resources_compress'
-        }]
-      },
-      meta: {
-        files: [{
-          expand: true,
-          cwd: 'test/fixtures/meta',
-          src: 'index.html',
-          dest: 'meta'
-        }]
-      }
-    },
-
     // Unit tests.
     nodeunit: {
       tests: ['test/*_test.js'],
@@ -118,13 +37,14 @@ module.exports = function(grunt) {
 
   });
 
-  // Actually load this plugin's task(s).
-  grunt.loadTasks('tasks');
-
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
+  
+  grunt.registerTask('vanilla', '', function () {
+    //vanilla.compile();
+  });
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
