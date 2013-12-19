@@ -1,7 +1,7 @@
 {
   "name": "vanilla",
-  "description": "Simple HTML templating plugin that crawls JS and CSS dependencies.",
-  "version": "1.0.2",
+  "description": "Simple text templating module.",
+  "version": "2.0.0",
   "homepage": "https://github.com/dschnare/vanilla",
   "author": {
     "name": "Darren Schnare",
@@ -21,7 +21,7 @@
       "url": "https://github.com/dschnare/vanilla/blob/master/LICENSE-MIT"
     }
   ],
-  "main": "Gruntfile.js",
+  "main": "index.js",
   "engines": {
     "node": ">= 0.8.0"
   },
@@ -34,12 +34,6 @@
     "grunt-contrib-nodeunit": "~0.2.0",
     "grunt": "~0.4.2"
   },
-  "peerDependencies": {
-    "grunt": "~0.4.2"
-  },
-  "keywords": [
-    "gruntplugin"
-  ],
   "dependencies": {
     "yuicompressor": "~2.4.8",
     "hogan.js": "~2.0.0",
