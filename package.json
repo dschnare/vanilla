@@ -46,6 +46,8 @@
     "beefcake.js": "git://github.com/dschnare/beefcake.js.git",
     "underscore": "~1.5.2",
     "glob": "~3.2.7",
-    "async": "~0.2.9"
+    "async": "~0.2.9",
+    "mkdirp": "~0.3.5",
+    "tmp": "0.0.23"
   }
 }
