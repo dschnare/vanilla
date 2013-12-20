@@ -10,7 +10,7 @@
 
 var VANILLA = require('./index');
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
   // Project configuration.
   grunt.initConfig({
@@ -29,7 +29,7 @@ module.exports = function(grunt) {
     
     vanilla: {
       task_test: {
-        src: '../index.js'
+        src: 'lib/*/defaults.js'
       }
     },
 
@@ -45,22 +45,26 @@ module.exports = function(grunt) {
 
   });
 
+  // The vanilla task (eventually this should be a Grunt plugin)
+  grunt.registerMultiTask('vanilla', function () {
+    var done = this.async();
+    
+    // VANILLA.compile(this.files, this.options(), function (error) {
+    //   if (error) {
+    //     throw error;
+    //     done(false);
+    //   } else {
+    //     done();
+    //   }
+    // });
+  
+    done();
+  });
+  
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
-  
-  grunt.registerTask('vanilla', function () {
-    var done, options, files;
-    
-    done = this.async();
-    options = this.options();
-    files = this.files;
-    
-    console.log(files);
-    
-    done();
-  });
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.

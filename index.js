@@ -2,7 +2,7 @@ var
 // Modules
 FS, PATH, _, PROCESSOR, ASYNC, GLOB, MKDIRP,
 // Functions
-normalizeFiles, processAndWriteFiles, processFiles, extendRec, getFileTypeOptions;
+processAndWriteFiles, processFiles, extendRec, getFileTypeOptions;
 
 FS = require('fs');
 PATH = require('path');
@@ -23,6 +23,8 @@ exports.compile = function (files, options, callback) {
     options = {};
   }
   
+  // Initialize the options object.
+  
   options = options || {};
   extensionDefaults = {
     js: _.extend({}, options.defaults, {
@@ -31,20 +33,20 @@ exports.compile = function (files, options, callback) {
       pipeline: PROCESSOR.defaultPipelines.js(PROCESSOR.makePipeline())
     }),
     css: _.extend({}, options.defaults, {
-      directivePrefix: '/* #',
-      directiveSuffix: '*/',
+      directivePrefix: '/** #',
+      directiveSuffix: '**/',
       pipeline: PROCESSOR.defaultPipelines.css(PROCESSOR.makePipeline())
     }),
     html: _.extend({}, options.defaults, {
-      directivePrefix: '<!-- #',
-      directiveSuffix: '-->',
+      directivePrefix: '<',
+      directiveSuffix: '>',
       pipeline: PROCESSOR.defaultPipelines.hmtl(PROCESSOR.makePipeline())
     })
   };
   
   options.defaults = _.extend({
     directivePrefix: '#',
-    directiveSuffix: '\n',
+    directiveSuffix: '\n'
   }, options.defaults || {});
   
   // Ensure the file extensions have pipelines and that
@@ -63,6 +65,8 @@ exports.compile = function (files, options, callback) {
       }
     }
   });
+  
+  
 
   
   // Create the cache
@@ -90,12 +94,13 @@ exports.compile = function (files, options, callback) {
   }());
   
   
-  files = Array.isArray(files) ? files : [];
-  files = normalizeFiles(files);
+  files = exports.normalizeFiles(files);
+  
   context = {
     cache: cache,
     extensions: options
   };
+  
   context.helpers = PROCESSOR.generateHelpers(context, {
     processFiles: processFiles,
     processAndWriteFiles: processAndWriteFiles
@@ -104,12 +109,13 @@ exports.compile = function (files, options, callback) {
   processAndWriteFiles(files, context, callback);
 };
 
-normalizeFiles = function (files) {
+exports.normalizeFiles = function (files) {
   var normalizedFiles;
   
+  files = Array.isArray(files) ? files : [];
   normalizedFiles = [];
   
-  files.forEach(files, function (file) {
+  files.forEach(function (file) {
     var dest, matches;
     
     if (typeof file === 'string') {
@@ -122,12 +128,12 @@ normalizeFiles = function (files) {
       if (typeof file.src === 'string') {
         matches = GLOB.sync(file.src);
         
-        if (matches.length === 1 && matches[0] === file.src) {
+        if (matches.length === 1 && matches[0] === file.src && FS.statSync(matches[0]).isFile()) {
           normalizedFiles.push({
             src: PATH.resolve(file.src),
             dest: dest
           });
-        } else if (matches.length > 1) {
+        } else if (matches.length >= 1) {
           if (PATH.extname(dest)) {
             dest = PATH.dirname(dest);
           }
@@ -135,8 +141,8 @@ normalizeFiles = function (files) {
           matches.forEach(function (f) {
             var stat;
             
-            if (PATH.existsSync(f)) {
-              stat = PATH.statSync(f);
+            if (FS.existsSync(f)) {
+              stat = FS.statSync(f);
               
               if (stat.isFile()) {
                 normalizedFiles.push({
@@ -145,7 +151,7 @@ normalizeFiles = function (files) {
                 });
               } else if (stat.isDirectory()) {
                 normalizedFiles = normalizedFiles.concat(
-                  normalizeFiles([{
+                  exports.normalizeFiles([{
                     src: PATH.join(f, '*.*'),
                     dest: dest
                   }])
