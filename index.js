@@ -209,15 +209,15 @@ processFiles = function (files, context, options, callback) {
   ASYNC.map(files, function (file, callback) {
     var opts, f;
     
-    if (!file.dest || !context.cache.exists(file.src)) {
+    if (context.cache.exists(file.src)) {
+      f = context.cache.get(file.src);
+      f.dest = f.dest || file.dest;
+      callback(null, f);
+    } else {
       opts = extendRec({}, getFileTypeOptions(context.extensions, PATH.extname(file.src)), options);
       file.content = FS.readFileSync(file.src, 'utf8');
       context.cache.set(file.src, file);
       opts.pipeline.process(file, opts, context.helpers, callback);
-    } else {
-      f = context.cache.get(file.src);
-      f.dest = f.dest || file.dest;
-      callback(null, f);
     }
   }, callback);
 };
