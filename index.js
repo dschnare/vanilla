@@ -28,7 +28,7 @@ exports.compile = function (files, options, callback) {
     js: _.extend({}, options.defaults, {
       directivePrefix: '// #',
       directiveSuffix: '\n',
-      pipeline: pipeline = PROCESSOR.defaultPipelines.js(PROCESSOR.makePipeline())
+      pipeline: PROCESSOR.defaultPipelines.js(PROCESSOR.makePipeline())
     }),
     css: _.extend({}, options.defaults, {
       directivePrefix: '/* #',
@@ -110,7 +110,7 @@ normalizeFiles = function (files) {
   normalizedFiles = [];
   
   files.forEach(files, function (file) {
-    var dest;
+    var dest, matches;
     
     if (typeof file === 'string') {
       file = {src:file, dest:'.'};
@@ -141,7 +141,7 @@ normalizeFiles = function (files) {
               if (stat.isFile()) {
                 normalizedFiles.push({
                   src: PATH.resolve(f),
-                  dest: PATH.join(dest, PATH.basename(f));
+                  dest: PATH.join(dest, PATH.basename(f))
                 });
               } else if (stat.isDirectory()) {
                 normalizedFiles = normalizedFiles.concat(

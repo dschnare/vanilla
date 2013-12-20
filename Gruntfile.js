@@ -6,9 +6,9 @@
  * Licensed under the MIT license.
  */
  
- var vanilla = require('./index');
-
 'use strict';
+
+var VANILLA = require('./index');
 
 module.exports = function(grunt) {
 
@@ -17,12 +17,20 @@ module.exports = function(grunt) {
     jshint: {
       all: [
         'Gruntfile.js',
-        'tasks/*.js',
+        'index.js',
+        'lib/processor/*.js',
+        'lib/processor/lib/*.js',
         '<%= nodeunit.tests %>',
       ],
       options: {
         jshintrc: '.jshintrc',
       },
+    },
+    
+    vanilla: {
+      task_test: {
+        src: '../index.js'
+      }
     },
 
     // Before generating any new files, remove any previously-created files.
@@ -42,8 +50,16 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
   
-  grunt.registerTask('vanilla', '', function () {
-    //vanilla.compile();
+  grunt.registerTask('vanilla', function () {
+    var done, options, files;
+    
+    done = this.async();
+    options = this.options();
+    files = this.files;
+    
+    console.log(files);
+    
+    done();
   });
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
