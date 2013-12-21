@@ -2,7 +2,8 @@ var
 // Modules
 FS, PATH, _, PROCESSOR, ASYNC, GLOB, MKDIRP,
 // Functions
-processAndWriteFiles, processFiles, extendRec, getFileTypeOptions;
+processAndWriteFiles, processFiles, extendRec, 
+getFileExtensions, getFileTypeOptions;
 
 FS = require('fs');
 PATH = require('path');
@@ -26,6 +27,12 @@ exports.compile = function (files, options, callback) {
   // Initialize the options object.
   
   options = options || {};
+  
+  options.defaults = _.extend({
+    directivePrefix: '#',
+    directiveSuffix: '\n'
+  }, options.defaults || {});
+  
   extensionDefaults = {
     js: _.extend({}, options.defaults, {
       directivePrefix: '// #',
@@ -33,8 +40,8 @@ exports.compile = function (files, options, callback) {
       pipeline: PROCESSOR.defaultPipelines.js(PROCESSOR.makePipeline())
     }),
     css: _.extend({}, options.defaults, {
-      directivePrefix: '/** #',
-      directiveSuffix: '**/',
+      directivePrefix: '/* #',
+      directiveSuffix: '*/',
       pipeline: PROCESSOR.defaultPipelines.css(PROCESSOR.makePipeline())
     }),
     html: _.extend({}, options.defaults, {
@@ -43,11 +50,6 @@ exports.compile = function (files, options, callback) {
       pipeline: PROCESSOR.defaultPipelines.hmtl(PROCESSOR.makePipeline())
     })
   };
-  
-  options.defaults = _.extend({
-    directivePrefix: '#',
-    directiveSuffix: '\n'
-  }, options.defaults || {});
   
   // Ensure the file extensions have pipelines and that
   // builtin pipelines use their default pipelines.
@@ -205,21 +207,37 @@ processFiles = function (files, context, options, callback) {
     callback = options;
     options = {};
   }
-      
-  ASYNC.map(files, function (file, callback) {
-    var opts, f;
+  
+  ASYNC.map(getFileExtensions(files), function (ext, callback) {
+    var phases, opts;
     
-    if (context.cache.exists(file.src)) {
-      f = context.cache.get(file.src);
-      f.dest = f.dest || file.dest;
-      callback(null, f);
+    opts = extendRec({}, getFileTypeOptions(context.extensions, ext), options);
+    phases = opts.pipeline.getPhases();
+    
+    ASYNC.mapSeries(phases, function (phase, callback) {
+      ASYNC.mapSeries(files.filter(function (file) {
+        return PATH.extname(file.src) === ext;
+      }), function (file, callback) {
+        var opts, f;
+      
+        if (context.cache.exists(file.src)) {
+          f = context.cache.get(file.src);
+          f.dest = f.dest || file.dest;
+          callback(null, f);
+        } else {
+          file.content = FS.readFileSync(file.src, 'utf8');
+          context.cache.set(file.src, file);
+          opts.pipeline.process(phase, file, opts, context.helpers, callback);
+        }
+      }, callback);
+    }, callback);
+  }, function (error, files) {
+    if (error) {
+      callback(error);
     } else {
-      opts = extendRec({}, getFileTypeOptions(context.extensions, PATH.extname(file.src)), options);
-      file.content = FS.readFileSync(file.src, 'utf8');
-      context.cache.set(file.src, file);
-      opts.pipeline.process(file, opts, context.helpers, callback);
+      callback(null, _.flatten(files));
     }
-  }, callback);
+  });
 };
 
 extendRec = function () {
@@ -241,6 +259,12 @@ extendRec = function () {
       });
     }
   });
+};
+
+getFileExtensions = function (files) {
+  _.uniq(files.map(function (file) {
+    return PATH.extname(file.src);
+  }));
 };
 
 getFileTypeOptions = function (extensions, ext) {
