@@ -1,6 +1,10 @@
 'use strict';
 
-var grunt = require('grunt');
+var GRUNT, VANILLA, PATH;
+
+GRUNT = require('grunt');
+VANILLA = require('../index');
+PATH = require('path');
 
 /*
   ======== A Handy Little Nodeunit Reference ========
@@ -27,9 +31,38 @@ exports.vanilla = {
     // setup here if necessary
     done();
   },
-  task_test: function (test) {
-    test.expect(1);
-    test.ok(true);
+  fileNormalization: function (test) {
+    var files;
+    
+    test.expect(17);
+    
+    files = VANILLA.normalizeFiles('index.js');
+    test.equal(files.length, 0, 'expect no files to be normalized when passed a string.');
+    
+    files = VANILLA.normalizeFiles(['index.js']);
+    test.equal(files.length, 1, 'expect one file to be normalized.');
+    test.equal(files[0].src, PATH.resolve('index.js'), 'expect the src property to be an absolute path.');
+    test.equal(files[0].dest, PATH.resolve('index.js').replace(/index.js$/, 'out-index.js'), 'expect the dest property to be a default value who\'s basename is prefixed with "out-"');
+    
+    files = VANILLA.normalizeFiles(['index.js', 'lib/processor/lib']);
+    test.equal(files.length, 2, 'expect two files to be normalized.');
+    test.equal(files[0].src, PATH.resolve('index.js'), 'expect the src property to be an absolute path.');
+    test.equal(files[0].dest, PATH.resolve('out-index.js'), 'expect the dest property to be a default value who\'s basename is prefixed with "out-"');
+    test.equal(files[1].src, PATH.resolve('lib/processor/lib/index.js'), 'expect the src property to be an absolute path.');
+    test.equal(files[1].dest, PATH.resolve('lib/processor/lib/out-index.js'), 'expect the dest property to be a default value who\'s basename is prefixed with "out-"');
+    
+    files = VANILLA.normalizeFiles([{src:'index.js', dest:'index2.js'}]);
+    test.equal(files.length, 1, 'expect one file to be normalized.'); 
+    test.equal(files[0].src, PATH.resolve('index.js'), 'expect the src property to be an absolute path.');
+    test.equal(files[0].dest, PATH.resolve('index2.js'), 'expect the dest property to be a default value who\'s basename is prefixed with "out-"');
+    
+    files = VANILLA.normalizeFiles([{src:'index.js', dest:'index2.js'}, {src:'lib/processor/lib', dest:'index3.js'}]);
+    test.equal(files.length, 2, 'expect two files to be normalized.');
+    test.equal(files[0].src, PATH.resolve('index.js'), 'expect the src property to be an absolute path.');
+    test.equal(files[0].dest, PATH.resolve('index2.js'), 'expect the dest property to be a default value who\'s basename is prefixed with "out-"');
+    test.equal(files[1].src, PATH.resolve('lib/processor/lib/index.js'), 'expect the src property to be an absolute path.');
+    test.equal(files[1].dest, PATH.resolve('lib/processor/lib/out-index.js'), 'expect the dest property to be a default value who\'s basename is prefixed with "out-"');
+    
     test.done();
   }
   // default_layout: function(test) {

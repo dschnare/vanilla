@@ -118,45 +118,46 @@ exports.normalizeFiles = function (files) {
   normalizedFiles = [];
   
   files.forEach(function (file) {
-    var dest, matches;
+    var matches;
     
     if (typeof file === 'string') {
-      file = {src:file, dest:'.'};
+      file = {src:file};
     }
     
     if (Object(file) === file && file.src) {
-      dest = PATH.resolve(file.dest || '.');
+      file.src = PATH.resolve(file.src);
       
       if (typeof file.src === 'string') {
         matches = GLOB.sync(file.src);
         
         if (matches.length === 1 && matches[0] === file.src && FS.statSync(matches[0]).isFile()) {
           normalizedFiles.push({
-            src: PATH.resolve(file.src),
-            dest: dest
+            src: file.src,
+            dest: PATH.resolve(file.dest || PATH.join(PATH.dirname(file.src), 'out-' + PATH.basename(file.src)))
           });
         } else if (matches.length >= 1) {
-          if (PATH.extname(dest)) {
-            dest = PATH.dirname(dest);
-          }
-          
           matches.forEach(function (f) {
-            var stat;
+            var stat, dest;
             
             if (FS.existsSync(f)) {
               stat = FS.statSync(f);
               
               if (stat.isFile()) {
+                dest = file.dest || file.src;
+                
+                if (PATH.extname(dest)) {
+                  dest = PATH.dirname(dest);
+                }
+                
+                dest = PATH.resolve(PATH.join(dest, (file.dest ? '' : 'out-') + PATH.basename(f)));
+                
                 normalizedFiles.push({
                   src: PATH.resolve(f),
-                  dest: PATH.join(dest, PATH.basename(f))
+                  dest: dest
                 });
               } else if (stat.isDirectory()) {
                 normalizedFiles = normalizedFiles.concat(
-                  exports.normalizeFiles([{
-                    src: PATH.join(f, '*.*'),
-                    dest: dest
-                  }])
+                  exports.normalizeFiles([PATH.join(f, '*.*')])
                 );
               }
             }
