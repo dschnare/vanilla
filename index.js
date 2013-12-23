@@ -134,7 +134,7 @@ exports.normalizeFiles = function (files) {
       if (typeof file.src === 'string') {
         matches = GLOB.sync(file.src);
         
-        if (matches.length === 1 && matches[0] === file.src && FS.statSync(matches[0]).isFile()) {
+        if (matches.length === 1 && matches[0] === file.src.replace(/\\/g, '/') && FS.statSync(matches[0]).isFile()) {
           normalizedFiles.push({
             src: file.src,
             dest: PATH.resolve(file.dest || PATH.join(PATH.dirname(file.src), 'out-' + PATH.basename(file.src)))

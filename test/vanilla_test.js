@@ -54,12 +54,12 @@ exports.vanilla = {
     files = VANILLA.normalizeFiles([{src:'index.js', dest:'index2.js'}]);
     test.equal(files.length, 1, 'expect one file to be normalized.'); 
     test.equal(files[0].src, PATH.resolve('index.js'), 'expect the src property to be an absolute path.');
-    test.equal(files[0].dest, PATH.resolve('index2.js'), 'expect the dest property to be a default value who\'s basename is prefixed with "out-"');
+    test.equal(files[0].dest, PATH.resolve('index2.js'), 'expect the dest property be an absolute path with "index2.js"');
     
     files = VANILLA.normalizeFiles([{src:'index.js', dest:'index2.js'}, {src:'lib/processor/lib', dest:'index3.js'}]);
     test.equal(files.length, 2, 'expect two files to be normalized.');
     test.equal(files[0].src, PATH.resolve('index.js'), 'expect the src property to be an absolute path.');
-    test.equal(files[0].dest, PATH.resolve('index2.js'), 'expect the dest property to be a default value who\'s basename is prefixed with "out-"');
+    test.equal(files[0].dest, PATH.resolve('index2.js'), 'expect the dest property to be am absolute path with "index2.js"');
     test.equal(files[1].src, PATH.resolve('lib/processor/lib/index.js'), 'expect the src property to be an absolute path.');
     test.equal(files[1].dest, PATH.resolve('lib/processor/lib/out-index.js'), 'expect the dest property to be a default value who\'s basename is prefixed with "out-"');
     
