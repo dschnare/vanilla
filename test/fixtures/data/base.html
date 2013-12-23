@@ -1,0 +1,28 @@
+<data>
+{
+  pages: function () {
+    return this.files.filter(function (data) {
+      return data.type === 'page';
+    });
+  }
+}
+</data>
+<html>
+  <head>
+    <block meta>
+      <title>{{title}}</title>
+    </block>
+  </head>
+  <body>
+    <block header>{{{summary}}}</block>
+    <block body>
+    <block footer>
+    {{>widget}}
+    
+    <div>
+      {{#pages}}
+        <a href="{{dest}}">{{title}}</a>
+      {{/pages}}
+    </div>
+  </body>
+</html>

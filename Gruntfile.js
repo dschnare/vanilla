@@ -43,6 +43,10 @@ module.exports = function (grunt) {
       includes: {
         src: 'test/fixtures/includes/index.html',
         dest: 'tmp/includes/index.html'
+      },
+      data: {
+        src: 'test/fixtures/data/index.html',
+        dest: 'tmp/data/index.html'
       }
     },
 

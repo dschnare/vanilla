@@ -100,57 +100,14 @@ exports.vanilla = {
     test.equal(actual, expected, 'expect included files to be parsed and inserted appropriately.');
 
     test.done();
+  },
+  data: function(test) {
+    test.expect(1);
+
+    var actual = GRUNT.file.read('tmp/data/index.html');
+    var expected = GRUNT.file.read('test/expected/data/index.html');
+    test.equal(actual, expected, 'expect data to be parsed and interpolated correctly.');
+
+    test.done();
   }
-  // resources_debug: function(test) {
-  //   test.expect(3);
-
-  //   var actual = grunt.file.read('tmp/resources_debug/index.html');
-  //   var expected = grunt.file.read('test/expected/resources_debug/index.html');
-  //   test.equal(actual, expected, 'expect resource files to be parsed and inserted appropriately when debugging.');
-
-  //   actual = grunt.file.read('tmp/resources_debug/js/a/index.js');
-  //   expected = grunt.file.read('test/expected/resources_debug/js/a/index.js');
-  //   test.equal(actual, expected, 'expect a/index.js script to be copied.');
-
-  //   actual = grunt.file.read('tmp/resources_debug/js/a/lib.js');
-  //   expected = grunt.file.read('test/expected/resources_debug/js/a/lib.js');
-  //   test.equal(actual, expected, 'expect a/lib.js script to be copied.');
-
-  //   test.done();
-  // },
-  // resources_concat: function(test) {
-  //   test.expect(2);
-
-  //   var actual = grunt.file.read('tmp/resources_concat/index.html');
-  //   var expected = grunt.file.read('test/expected/resources_concat/index.html');
-  //   test.equal(actual, expected, 'expect resource files to be parsed and inserted appropriately when debugging.');
-
-  //   actual = grunt.file.read('tmp/resources_concat/js/a/index.max.js');
-  //   expected = grunt.file.read('test/expected/resources_concat/js/a/index.max.js');
-  //   test.equal(actual, expected, 'expect a/index.js script to be maximized.');
-
-  //   test.done();
-  // },
-  // resources_compress: function(test) {
-  //   test.expect(2);
-
-  //   var actual = grunt.file.read('tmp/resources_compress/index.html');
-  //   var expected = grunt.file.read('test/expected/resources_compress/index.html');
-  //   test.equal(actual, expected, 'expect resource files to be parsed and inserted appropriately when debugging.');
-
-  //   actual = grunt.file.read('tmp/resources_compress/js/a/index.min.js');
-  //   expected = grunt.file.read('test/expected/resources_compress/js/a/index.min.js');
-  //   test.equal(actual, expected, 'expect a/index.js script to be minimized.');
-
-  //   test.done();
-  // },
-  // meta: function(test) {
-  //   test.expect(1);
-
-  //   var actual = grunt.file.read('tmp/meta/index.html');
-  //   var expected = grunt.file.read('test/expected/meta/index.html');
-  //   test.equal(actual, expected, 'expect meta data to be parsed and interpolated correctly.');
-
-  //   test.done();
-  // }
 };

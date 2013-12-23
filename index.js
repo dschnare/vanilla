@@ -235,7 +235,9 @@ processFiles = function (files, context, options, callback) {
         //   f.dest = f.dest || file.dest;
         //   callback(null, f);
         // } else {
-          file.content = FS.readFileSync(file.src, 'utf8');
+          if (!file.content) {
+            file.content = FS.readFileSync(file.src, 'utf8');
+          }
           // context.cache.set(file.src, file);
           opts.pipeline.process(phase, file, opts, context.helpers, callback);
         // }
@@ -259,10 +261,11 @@ extendRec = function () {
   _.each(args, function (arg) {
     if (Object(arg) === arg) {
       _.each(arg, function (v, k) {
-        if (Object(v) === v && Object(o[k]) === o[k]) {
-          o[k] = extendRec(o[k], v);
-        } else if (Array.isArray(v) && Array.isArray(o[k])) {
-          o[k] = o[k].concat(v);
+        if (Array.isArray(v) && Array.isArray(o[k])) {
+          o[k] = v;
+          //o[k] = o[k].concat(v);
+        } else if (Object(v) === v && Object(o[k]) === o[k]) {
+          extendRec(o[k], v);
         } else {
           o[k] = v;
         }
