@@ -31,6 +31,10 @@ module.exports = function (grunt) {
       default_layout: {
         src: 'test/fixtures/default_layout/index.html',
         dest: 'tmp/default_layout/index.html'
+      },
+      extension_layout: {
+        src: 'test/fixtures/extension_layout/index.html',
+        dest: 'tmp/extension_layout/index.html'
       }
     },
 

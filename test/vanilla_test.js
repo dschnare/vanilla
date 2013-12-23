@@ -73,16 +73,16 @@ exports.vanilla = {
     test.equal(actual, expected, 'expect the blocks to be preserved when no extensions are available.');
 
     test.done();
+  },
+  extension_layout: function(test) {
+    test.expect(1);
+
+    var actual = GRUNT.file.read('tmp/extension_layout/index.html');
+    var expected = GRUNT.file.read('test/expected/extension_layout/index.html');
+    test.equal(actual, expected, 'expect the blocks to be replaced appropriately when extensions are available.');
+
+    test.done();
   }
-  // extension_layout: function(test) {
-  //   test.expect(1);
-
-  //   var actual = grunt.file.read('tmp/extension_layout/index.html');
-  //   var expected = grunt.file.read('test/expected/extension_layout/index.html');
-  //   test.equal(actual, expected, 'expect the blocks to be replaced appropriately when extensions are available.');
-
-  //   test.done();
-  // },
   // nested_layout: function(test) {
   //   test.expect(1);
 

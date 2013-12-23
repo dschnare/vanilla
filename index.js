@@ -220,7 +220,6 @@ processFiles = function (files, context, options, callback) {
     opts = extendRec({}, getFileTypeOptions(context.extensions, ext), options);
     phases = opts.pipeline.getPhases();
     
-    
     ASYNC.mapSeries(phases, function (phase, callback) {
       ASYNC.mapSeries(files.filter(function (file) {
         return PATH.extname(file.src) === ext;
