@@ -82,25 +82,25 @@ exports.vanilla = {
     test.equal(actual, expected, 'expect the blocks to be replaced appropriately when extensions are available.');
 
     test.done();
+  },
+  nested_layout: function(test) {
+    test.expect(1);
+
+    var actual = GRUNT.file.read('tmp/nested_layout/index.html');
+    var expected = GRUNT.file.read('test/expected/nested_layout/index.html');
+    test.equal(actual, expected, 'expect the blocks to be replaced appropriately throughout the layout hierarchy.');
+
+    test.done();
+  },
+  includes: function(test) {
+    test.expect(1);
+
+    var actual = GRUNT.file.read('tmp/includes/index.html');
+    var expected = GRUNT.file.read('test/expected/includes/index.html');
+    test.equal(actual, expected, 'expect included files to be parsed and inserted appropriately.');
+
+    test.done();
   }
-  // nested_layout: function(test) {
-  //   test.expect(1);
-
-  //   var actual = grunt.file.read('tmp/nested_layout/index.html');
-  //   var expected = grunt.file.read('test/expected/nested_layout/index.html');
-  //   test.equal(actual, expected, 'expect the blocks to be replaced appropriately throughout the layout hierarchy.');
-
-  //   test.done();
-  // },
-  // includes: function(test) {
-  //   test.expect(1);
-
-  //   var actual = grunt.file.read('tmp/includes/index.html');
-  //   var expected = grunt.file.read('test/expected/includes/index.html');
-  //   test.equal(actual, expected, 'expect included files to be parsed and inserted appropriately.');
-
-  //   test.done();
-  // },
   // resources_debug: function(test) {
   //   test.expect(3);
 

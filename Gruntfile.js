@@ -35,6 +35,14 @@ module.exports = function (grunt) {
       extension_layout: {
         src: 'test/fixtures/extension_layout/index.html',
         dest: 'tmp/extension_layout/index.html'
+      },
+      nested_layout: {
+        src: 'test/fixtures/nested_layout/index.html',
+        dest: 'tmp/nested_layout/index.html'
+      },
+      includes: {
+        src: 'test/fixtures/includes/index.html',
+        dest: 'tmp/includes/index.html'
       }
     },
 

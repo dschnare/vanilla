@@ -67,7 +67,7 @@ exports.compile = function (files, options, callback) {
         options[key].pipeline = pipeline;
       } 
     } else {
-      options[key] = value; 
+      options[key] = value;
     }
   });
   

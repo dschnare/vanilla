@@ -1,13 +1,13 @@
-<v:layout src="./page.html" />
+<extends "./page.html">
 
-<v:replace name="body">
+<replace body>
   <p>This is the body!</p>
-</v:replace>
+</replace>
 
-<v:append name="body">
+<append body>
   <p>This is more content added to the body.</p>
-</v:append>
+</append>
 
-<v:block name="any">
+<block any>
   this should be ignored.
-</v:block>
+</block>
