@@ -64,16 +64,16 @@ exports.vanilla = {
     test.equal(files[1].dest, PATH.resolve('lib/processor/lib/out-index.js'), 'expect the dest property to be a default value who\'s basename is prefixed with "out-"');
     
     test.done();
+  },
+  default_layout: function(test) {
+    test.expect(1);
+
+    var actual = GRUNT.file.read('tmp/default_layout/index.html');
+    var expected = GRUNT.file.read('test/expected/default_layout/index.html');
+    test.equal(actual, expected, 'expect the blocks to be preserved when no extensions are available.');
+
+    test.done();
   }
-  // default_layout: function(test) {
-  //   test.expect(1);
-
-  //   var actual = grunt.file.read('tmp/default_layout/index.html');
-  //   var expected = grunt.file.read('test/expected/default_layout/index.html');
-  //   test.equal(actual, expected, 'expect the blocks to be preserved when no extensions are available.');
-
-  //   test.done();
-  // },
   // extension_layout: function(test) {
   //   test.expect(1);
 

@@ -28,8 +28,9 @@ module.exports = function (grunt) {
     },
     
     vanilla: {
-      task_test: {
-        src: 'lib/*/defaults.js'
+      default_layout: {
+        src: 'test/fixtures/default_layout/index.html',
+        dest: 'tmp/default_layout/index.html'
       }
     },
 
@@ -49,16 +50,19 @@ module.exports = function (grunt) {
   grunt.registerMultiTask('vanilla', function () {
     var done = this.async();
     
-    // VANILLA.compile(this.files, this.options(), function (error) {
-    //   if (error) {
-    //     throw error;
-    //     done(false);
-    //   } else {
-    //     done();
-    //   }
-    // });
-  
-    done();
+    VANILLA.compile(this.files.map(function (file) {
+      return {
+        src: file.src.shift(), // Only take the first src value; doesn't make sense any other way
+        dest: file.dest
+      };
+    }), this.options(), function (error) {
+      if (error) {
+        throw error;
+        // done(false);
+      } else {
+        done();
+      }
+    });
   });
   
   // These plugins provide necessary tasks.

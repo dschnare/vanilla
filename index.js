@@ -30,7 +30,8 @@ exports.compile = function (files, options, callback) {
   
   options.defaults = _.extend({
     directivePrefix: '#',
-    directiveSuffix: '\n'
+    directiveSuffix: '\n',
+    pipeline: PROCESSOR.defaultPipelines.defaults(PROCESSOR.makePipeline())
   }, options.defaults || {});
   
   extensionDefaults = {
@@ -47,29 +48,29 @@ exports.compile = function (files, options, callback) {
     html: _.extend({}, options.defaults, {
       directivePrefix: '<',
       directiveSuffix: '>',
-      pipeline: PROCESSOR.defaultPipelines.hmtl(PROCESSOR.makePipeline())
+      pipeline: PROCESSOR.defaultPipelines.html(PROCESSOR.makePipeline())
     })
   };
   
   // Ensure the file extensions have pipelines and that
   // builtin pipelines use their default pipelines.
-  _.each(options, function (value, key) {
+  _.each(extensionDefaults, function (value, key) {
     var pipeline;
     
-    if (key !== 'defaults') {
-      pipeline = extensionDefaults[key] ? extensionDefaults[key].pipeline : PROCESSOR.makePipeline();
-      options[key] = _.extend({}, extensionDefaults[key] || options.defaults, value);
+    if (options[key]) {
+      pipeline = extensionDefaults[key].pipeline;
+      options[key] = _.extend({}, extensionDefaults[key], value);
       
       if (typeof value.pipeline === 'function') {
         options[key].pipeline = value.pipeline(pipeline);
       } else if (!value.pipeline || typeof value.process !== 'function') {
         options[key].pipeline = pipeline;
-      }
+      } 
+    } else {
+      options[key] = value; 
     }
   });
   
-  
-
   
   // Create the cache
   cache = (function () {
@@ -125,6 +126,9 @@ exports.normalizeFiles = function (files) {
     }
     
     if (Object(file) === file && file.src) {
+      if (typeof file.src !== 'string') {
+        throw new Error('Expected file.src to be a string: ' + JSON.stringify(file.src));
+      }
       file.src = PATH.resolve(file.src);
       
       if (typeof file.src === 'string') {
@@ -215,21 +219,26 @@ processFiles = function (files, context, options, callback) {
     opts = extendRec({}, getFileTypeOptions(context.extensions, ext), options);
     phases = opts.pipeline.getPhases();
     
+    
     ASYNC.mapSeries(phases, function (phase, callback) {
       ASYNC.mapSeries(files.filter(function (file) {
         return PATH.extname(file.src) === ext;
       }), function (file, callback) {
-        var opts, f;
+        var f;
       
-        if (context.cache.exists(file.src)) {
-          f = context.cache.get(file.src);
-          f.dest = f.dest || file.dest;
-          callback(null, f);
-        } else {
+      // TODO: Rethink how to use caching to optimize
+      // file processing when files are referenced by other
+      // files more then once. Is this really even needed?
+      
+        // if (context.cache.exists(file.src)) {
+        //   f = context.cache.get(file.src);
+        //   f.dest = f.dest || file.dest;
+        //   callback(null, f);
+        // } else {
           file.content = FS.readFileSync(file.src, 'utf8');
-          context.cache.set(file.src, file);
+          // context.cache.set(file.src, file);
           opts.pipeline.process(phase, file, opts, context.helpers, callback);
-        }
+        // }
       }, callback);
     }, callback);
   }, function (error, files) {
@@ -260,10 +269,12 @@ extendRec = function () {
       });
     }
   });
+  
+  return o;
 };
 
 getFileExtensions = function (files) {
-  _.uniq(files.map(function (file) {
+  return _.uniq(files.map(function (file) {
     return PATH.extname(file.src);
   }));
 };
