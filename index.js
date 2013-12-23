@@ -108,6 +108,7 @@ exports.compile = function (files, options, callback) {
     processFiles: processFiles,
     processAndWriteFiles: processAndWriteFiles
   });
+  context.helpers.extend = extendRec;
   
   processAndWriteFiles(files, context, callback);
 };
