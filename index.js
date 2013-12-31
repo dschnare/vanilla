@@ -67,7 +67,7 @@ exports.compile = function (files, options, callback) {
         options[key].pipeline = pipeline;
       } 
     } else {
-      options[key] = value; 
+      options[key] = value;
     }
   });
   
@@ -108,6 +108,7 @@ exports.compile = function (files, options, callback) {
     processFiles: processFiles,
     processAndWriteFiles: processAndWriteFiles
   });
+  context.helpers.extend = extendRec;
   
   processAndWriteFiles(files, context, callback);
 };
@@ -134,7 +135,7 @@ exports.normalizeFiles = function (files) {
       if (typeof file.src === 'string') {
         matches = GLOB.sync(file.src);
         
-        if (matches.length === 1 && matches[0] === file.src && FS.statSync(matches[0]).isFile()) {
+        if (matches.length === 1 && matches[0] === file.src.replace(/\\/g, '/') && FS.statSync(matches[0]).isFile()) {
           normalizedFiles.push({
             src: file.src,
             dest: PATH.resolve(file.dest || PATH.join(PATH.dirname(file.src), 'out-' + PATH.basename(file.src)))
@@ -219,7 +220,6 @@ processFiles = function (files, context, options, callback) {
     opts = extendRec({}, getFileTypeOptions(context.extensions, ext), options);
     phases = opts.pipeline.getPhases();
     
-    
     ASYNC.mapSeries(phases, function (phase, callback) {
       ASYNC.mapSeries(files.filter(function (file) {
         return PATH.extname(file.src) === ext;
@@ -235,7 +235,9 @@ processFiles = function (files, context, options, callback) {
         //   f.dest = f.dest || file.dest;
         //   callback(null, f);
         // } else {
-          file.content = FS.readFileSync(file.src, 'utf8');
+          if (!file.content) {
+            file.content = FS.readFileSync(file.src, 'utf8');
+          }
           // context.cache.set(file.src, file);
           opts.pipeline.process(phase, file, opts, context.helpers, callback);
         // }
@@ -259,10 +261,11 @@ extendRec = function () {
   _.each(args, function (arg) {
     if (Object(arg) === arg) {
       _.each(arg, function (v, k) {
-        if (Object(v) === v && Object(o[k]) === o[k]) {
-          o[k] = extendRec(o[k], v);
-        } else if (Array.isArray(v) && Array.isArray(o[k])) {
-          o[k] = o[k].concat(v);
+        if (Array.isArray(v) && Array.isArray(o[k])) {
+          o[k] = v;
+          //o[k] = o[k].concat(v);
+        } else if (Object(v) === v && Object(o[k]) === o[k]) {
+          extendRec(o[k], v);
         } else {
           o[k] = v;
         }

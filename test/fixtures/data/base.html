@@ -1,0 +1,17 @@
+<html>
+  <head>
+    <block meta>
+      <title><%= title() %></title>
+    </block>
+  </head>
+  <body>
+    <block header><%= summary %></block>
+    <block body>
+    <block footer>
+    <%= partial('widget') %>
+    
+    <div>
+      <% _.where(files, {type:'page'}).forEach(function (file) { %><a href="<%= file.url %>"><%= file.title() %></a><% }); %>
+    </div>
+  </body>
+</html>
