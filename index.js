@@ -7,7 +7,7 @@ getFileExtensions, getFileTypeOptions;
 
 FS = require('fs');
 PATH = require('path');
-_ = require('underscore');
+_ = require('lodash');
 PROCESSOR = require('./lib/processor');
 ASYNC = require('async');
 GLOB = require('glob');

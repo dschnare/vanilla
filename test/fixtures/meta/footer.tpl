@@ -1,1 +1,1 @@
-Copyright {{year}}
+Copyright <%= year %>

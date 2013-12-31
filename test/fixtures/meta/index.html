@@ -1,6 +1,7 @@
 <v:layout src="./page.html" />
 <v:meta>
 {
+  type: 'page',
   title: function () {
     return this.url.split('/').pop().split('.').shift().toUpperCase();
   }
