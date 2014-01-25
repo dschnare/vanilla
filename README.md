@@ -217,6 +217,8 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 # Roadmap
 
 - Finish documentation of the builtin directives by example
+- Emphasis that block-level directives cannot be nested
+- Emphasis that when extending a file, only the blocks in the lowest layout-template can be modified
 - Document the processor extension API
 - Clean up how data is passed to other processors (does it have to be the options object?)
 - Use file streams to read files so that a predictable amount of memory is used per file, thereby enable the engine to work on large files
