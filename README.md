@@ -26,7 +26,7 @@ options = {
   }
 };
 
-VANILLA.compile(files), options, function (error) {
+VANILLA.compile(files, options, function (error) {
   if (error) {
     // something went wrong!
     throw error;
